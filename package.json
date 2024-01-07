@@ -1,0 +1,45 @@
+{
+  "name": "xeno-canto-api-ts",
+  "version": "1.0.0",
+  "description": "A TypeScript wrapper for the Xeno Canto API",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoeSiu/xeno-canto-api-ts"
+  },
+  "bugs": {
+    "url": "https://github.com/JoeSiu/xeno-canto-api-ts/issues"
+  },
+  "main": "dist/src/",
+  "types": "dist/types/",
+  "keywords": [
+    "xeno-canto",
+    "API",
+    "bird",
+    "grasshopper",
+    "bat",
+    "wildlife",
+    "sound",
+    "database",
+    "typescript"
+  ],
+  "scripts": {
+    "test": "vitest"
+  },
+  "author": {
+    "name": "Joe Siu",
+    "url": "https://github.com/JoeSiu"
+  },
+  "licenses": [
+    {
+      "type": "GNU GPLv3",
+      "url": "http://www.gnu.org/licenses/"
+    }
+  ],
+  "devDependencies": {
+    "prettier": "3.1.1",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.3"
+  }
+}
