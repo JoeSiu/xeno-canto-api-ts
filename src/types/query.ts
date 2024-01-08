@@ -1,6 +1,4 @@
 export interface XCQueryOption {
-  /** must be an integer between 1 and Response.numPages */
-  page?: number;
   /**
    * Group
    *
@@ -237,7 +235,7 @@ export interface XCQueryOption {
   [rest: string]: string | number | undefined;
 }
 
-export interface AdditionalQueryOption {
+export interface AdditionalWrapperOption {
   /**
    * Override the default BASE_URL
    */

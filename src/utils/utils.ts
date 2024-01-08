@@ -8,12 +8,14 @@ import { XCRecording, XCResponse } from "../types/response";
  * @param {string} baseUrl - The base URL to which the query string will be appended.
  * @param {string} query - The query string to be appended to the base URL.
  * @param {XCQueryOption} [options] - Optional additional query options.
+ * @param {number} [page] - Optional page number.
  * @return {string} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
   query: string,
   options?: XCQueryOption,
+  page?: number,
 ): string {
   let url = baseUrl;
 
@@ -27,6 +29,10 @@ export function constructQueryUrl(
 
   if (options) {
     url += stringFromXCQueryOption(options);
+  }
+
+  if (page) {
+    url += `&page=${page}`;
   }
 
   url = url.replace(/\s+/g, "+"); // Replace spaces with +
