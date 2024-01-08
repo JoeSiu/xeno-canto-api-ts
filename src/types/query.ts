@@ -54,7 +54,7 @@ export interface XCQueryOption {
    *
    * The second tag allows you to search for recordings that occur within a given rectangle, and is called box. It is more versatile than lat and lon, but is more awkward to type in manually, so we have made a {@link https://xeno-canto.org/explore/region | map-based search tool} to make things simpler. The general format of the box tag is as follows: box:LAT_MIN,LON_MIN,LAT_MAX,LON_MAX. Note that there must not be any spaces between the coordinates.
    */
-  lan?: string;
+  lan?: number | string;
   /**
    * Geographic coordinates
    *
@@ -62,7 +62,7 @@ export interface XCQueryOption {
    *
    * The second tag allows you to search for recordings that occur within a given rectangle, and is called box. It is more versatile than lat and lon, but is more awkward to type in manually, so we have made a {@link https://xeno-canto.org/explore/region | map-based search tool} to make things simpler. The general format of the box tag is as follows: box:LAT_MIN,LON_MIN,LAT_MAX,LON_MAX. Note that there must not be any spaces between the coordinates.
    */
-  lon?: string;
+  lon?: number | string;
   /**
    * Geographic coordinates
    *
@@ -84,7 +84,29 @@ export interface XCQueryOption {
    *
    * Up until 2022, the 'type' tag used to search a free text field. We have retained the option to search for non-standardized sound types by using the othertype tag. This tag also accepts a 'matches' operator, e.g. othertype:"=wing flapping".
    */
-  type?: string;
+  type?:
+    | "aberrant"
+    | "alarm call"
+    | "begging call"
+    | "call"
+    | "calling song"
+    | "courtship song"
+    | "dawn song"
+    | "distress call"
+    | "disturbance song"
+    | "drumming"
+    | "duet"
+    | "echolocation"
+    | "female song"
+    | "flight call"
+    | "flight song"
+    | "imitation"
+    | "nocturnal flight call"
+    | "rivalry song"
+    | "searching song"
+    | "social call"
+    | "song"
+    | "subsong";
   /**
    * Sound type
    *
@@ -126,7 +148,7 @@ export interface XCQueryOption {
    *
    * All recordings on xeno-canto are assigned a unique catalog number (generally displayed in the form XC76967). To search for a known recording number, use the nr tag: for example nr:76967. You can also search for a range of numbers as nr:88888-88890.
    */
-  nr?: string;
+  nr?: number | string;
   /**
    * Recording license
    *
@@ -156,13 +178,13 @@ export interface XCQueryOption {
    * - len:">120" will return recordings longer than two minutes in length
    * - len:"=19.8" will return recordings lasting exactly 19.8 seconds, dropping the default 1% margin.
    */
-  len?: string;
+  len?: number | string;
   /**
    * Additional search tags
    *
    * The area tag allows you to search by world area. Valid values for this tag are africa, america, asia, australia, europe.
    */
-  area?: string;
+  area?: "africa" | "america" | "asia" | "australia" | "europe";
   /**
    * Additional search tags
    *
@@ -174,13 +196,13 @@ export interface XCQueryOption {
    *
    * The year and month tags allow you to search for recordings that were recorded on a certain date. The following query will find all recordings that were recorded in May of 2010: year:2010 month:5. Similarly, month:6 will find recordings that were recorded during the month of June in any year. Both tags also accept '>' (after) and '<' (before).
    */
-  year?: string;
+  year?: number | string;
   /**
    * Additional search tags
    *
    * The year and month tags allow you to search for recordings that were recorded on a certain date. The following query will find all recordings that were recorded in May of 2010: year:2010 month:5. Similarly, month:6 will find recordings that were recorded during the month of June in any year. Both tags also accept '>' (after) and '<' (before).
    */
-  month?: string;
+  month?: number | string;
   /**
    * Additional search tags
    *
@@ -198,7 +220,7 @@ export interface XCQueryOption {
    *
    * The temp tag for temperature currently also applies only to grasshoppers. This field also accepts '<' and '>' operators. Use temp:25 to search for sounds recorded between 25-26 °C or temp:">20" for temperatures over 20 °C.
    */
-  temp?: string;
+  temp?: number | string;
   /**
    * Additional search tags
    *
@@ -228,11 +250,11 @@ export interface XCQueryOption {
    *
    * The smp tag can be used to search for recordings with a specific sampling rate (in Hz). For example, smp:">48000" will return hi-res recordings. Other frequencies include 22050, 44100 and multiples of 48000.
    */
-    smp?: string;
+  smp?: number | string;
   /**
-   * Any other custom tags not in the API
+   * Any other custom tags not in the API for compatibility
    */
-  [rest: string]: string | number | undefined;
+  [rest: string]: number | string | undefined;
 }
 
 export interface AdditionalWrapperOption {
