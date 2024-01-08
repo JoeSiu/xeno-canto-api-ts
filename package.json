@@ -23,6 +23,7 @@
     "typescript"
   ],
   "scripts": {
+    "build": "tsup",
     "test": "vitest"
   },
   "author": {
