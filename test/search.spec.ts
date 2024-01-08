@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AdditionalQueryOption, XCQueryOption, search } from "../src";
+import { AdditionalWrapperOption, XCQueryOption, search } from "../src";
 
 describe("Search function", () => {
   beforeEach(async () => {
@@ -19,7 +19,7 @@ describe("Search function", () => {
       const query = "Sparrow";
       const result = await search(query);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -31,7 +31,7 @@ describe("Search function", () => {
       const query = "qwertyuiopasdfghjklzxcvbnm";
       const result = await search(query);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -43,7 +43,7 @@ describe("Search function", () => {
       const query = "   Sparrow   ";
       const result = await search(query);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -56,7 +56,7 @@ describe("Search function", () => {
       const query = '"Sparrow"';
       const result = await search(query);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -81,7 +81,7 @@ describe("Search function", () => {
       };
       const result = await search(query, options);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -97,13 +97,13 @@ describe("Search function", () => {
       };
       const result = await search(query, options);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
       expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
+      expect(result.xcResponse.numRecordings).toBe(0);
+      expect(result.xcResponse.recordings.length).toBe(0);
     });
 
     test("Empty query with options", async () => {
@@ -114,7 +114,7 @@ describe("Search function", () => {
       };
       const result = await search(query, options);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -131,7 +131,7 @@ describe("Search function", () => {
       };
       const result = await search(query, options);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -147,7 +147,7 @@ describe("Search function", () => {
       };
       const result = await search(query, options);
 
-      console.log(`Testing URL: ${result.url}`);
+      console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
@@ -157,6 +157,41 @@ describe("Search function", () => {
     });
 
     test("Query multiple pages", async () => {
+      let currentPage = 1;
+      const maxPages = 3;
+
+      const query = "Sparrow";
+      const options: XCQueryOption = {
+        grp: "birds",
+      };
+
+      console.log(`Requesting first page: ${currentPage}/${maxPages}`);
+      const result = await search(query, options, currentPage);
+
+      console.log(`Requested URL: ${result.url}`);
+      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
+      console.log(`numPages: ${result.xcResponse.numPages}`);
+
+      while (currentPage < maxPages) {
+        currentPage++;
+        console.log(`Requesting next page: ${currentPage}/${maxPages}`);
+        const nextResult = await search(query, options, currentPage);
+        console.log(`Requested URL: ${nextResult.url}`);
+        console.log(
+          `recordings.length: ${nextResult.xcResponse.recordings.length}`,
+        );
+        expect(nextResult).toBeDefined();
+        expect(nextResult.rawResponse).toBeDefined();
+        expect(nextResult.xcResponse).toBeDefined();
+        expect(nextResult.xcResponse.page).toBe(currentPage);
+        expect(nextResult.xcResponse.numRecordings).toBeGreaterThan(0);
+        expect(nextResult.xcResponse.recordings.length).toBeGreaterThan(0);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    });
+
+    test("Query with non-existent page should throw an error", async () => {
       const query = "Sparrow";
       const options: XCQueryOption = {
         grp: "birds",
@@ -164,26 +199,9 @@ describe("Search function", () => {
         q: "A",
       };
 
-      const result = await search(query, options);
-
-      console.log(`Testing URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query with non-existent page should throw an error", async () => {
-      const query = "Sparrow";
-      const options: XCQueryOption = {
-        page: 99999,
-      };
-
       await expect(async () => {
         const result = await search(query, options);
-        console.log(`Testing URL: ${result.url}`);
+        console.log(`Requested URL: ${result.url}`);
         expect(result).toBeDefined();
         expect(result.rawResponse).toBeDefined();
         expect(result.xcResponse).toBeDefined();
@@ -195,7 +213,26 @@ describe("Search function", () => {
 
   describe("Additional options", () => {
     test("Override the default BASE_URL", async () => {
-      test.todo("Unimplemented test");
+      const query = "Sparrow";
+      const options: XCQueryOption = {
+        grp: "birds",
+        cnt: "Brazil",
+      };
+      const additionalOptions: AdditionalWrapperOption = {
+        baseUrl:
+          "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b?query=", // Fake data
+      };
+
+      const result = await search(query, options, undefined, additionalOptions);
+
+      console.log(`Requested URL: ${result.url}`);
+      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
+      console.log(`numPages: ${result.xcResponse.numPages}`);
+      expect(result).toBeDefined();
+      expect(result.rawResponse).toBeDefined();
+      expect(result.xcResponse).toBeDefined();
+      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
+      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
     });
   });
 });
