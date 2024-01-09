@@ -28,7 +28,7 @@ export function constructQueryUrl(
   }
 
   if (options) {
-    url += stringFromXCQueryOption(options);
+    url += convertXCQueryOptionToString(options);
   }
 
   if (page) {
@@ -46,7 +46,7 @@ export function constructQueryUrl(
  * @param {XCQueryOption} option - The XCQueryOption object to convert.
  * @return {string} The URL-encoded string representation of the XCQueryOption object.
  */
-export function stringFromXCQueryOption(option: XCQueryOption): string {
+export function convertXCQueryOptionToString(option: XCQueryOption): string {
   if (!option) {
     return "";
   }
@@ -60,9 +60,9 @@ export function stringFromXCQueryOption(option: XCQueryOption): string {
  * Takes a JSON object and converts it into an XCResponse object.
  *
  * @param {any} json - The JSON object to be converted.
- * @return {XCResponse} - The converted XCResponse object.
+ * @return {XCResponse} The converted XCResponse object.
  */
-export function XCResponseFromJson(json: any): XCResponse {
+export function convertJsonToXCResponse(json: any): XCResponse {
   return {
     numRecordings: Number(json["numRecordings"]),
     numSpecies: Number(json["numSpecies"]),

@@ -1,6 +1,6 @@
 // Import the types and utility functions
 import { AdditionalWrapperOption, XCQueryOption, XCResponse } from "./types";
-import { XCResponseFromJson, constructQueryUrl } from "./utils/utils";
+import { convertJsonToXCResponse, constructQueryUrl } from "./utils/utils";
 
 // Define the base URL for the API
 export const BASE_URL = "https://www.xeno-canto.org/api/2/recordings?query=";
@@ -9,10 +9,10 @@ export const BASE_URL = "https://www.xeno-canto.org/api/2/recordings?query=";
  * Searches for a query and returns the response and XC response.
  *
  * @param {string} query - The query to search for.
- * @param {XCQueryOption} [options] - The options for the search query.
+ * @param {XCQueryOption} [options] - Options for the search query.
  * @param {number} [page] - The page parameter is optional and is only needed if the results from a given search don't fit in a single page. If specified, page must be an integer between 1 and XCResponse.numPages.
  * @param {AdditionalWrapperOption} [additionalOptions] - Additional options for this wrapper.
- * @return {Promise<{ response: Response; xcResponse: XCResponse }>} - A promise that resolves to an object containing the response from fetch and a XCResponse object.
+ * @return {Promise<{ response: Response; xcResponse: XCResponse }>} A promise that resolves to an object containing the response from fetch and a XCResponse object.
  */
 async function search(
   query: string,
@@ -41,7 +41,7 @@ async function search(
   try {
     const rawResponse = await fetch(url);
     const json = await rawResponse.json();
-    const xcResponse = XCResponseFromJson(json);
+    const xcResponse = convertJsonToXCResponse(json);
 
     // If the API returned an error, throw an error
     if (xcResponse.error) {
