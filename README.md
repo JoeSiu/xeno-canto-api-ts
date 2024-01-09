@@ -23,7 +23,7 @@ npm install xeno-canto-api-ts
 To use `xeno-canto-api-ts` in your Node.js project, you need to import it as follows:
 
 ```ts
-import * as XentoCanto from "xeno-canto-api-ts";
+import * as XenoCanto from "xeno-canto-api-ts";
 ```
 
 ### Simple Search
@@ -31,13 +31,13 @@ import * as XentoCanto from "xeno-canto-api-ts";
 You can pass a string query to the `search` method like this:
 
 ```ts
-const result = await XentoCanto.search("Owl");
+const result = await XenoCanto.search("Owl");
 ```
 
 or
 
 ```ts
-XentoCanto.search("Owl").then((result) => {
+XenoCanto.search("Owl").then((result) => {
   // Do something with result
 });
 ```
@@ -66,9 +66,9 @@ const options = {
   grp: "birds",
   cnt: "United States",
   // ...
-} as XentoCanto.XCQueryOption;
+} as XenoCanto.XCQueryOption;
 
-const result = await XentoCanto.search(query, options);
+const result = await XenoCanto.search(query, options);
 ```
 
 * Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`, for example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
@@ -85,11 +85,11 @@ const options = {
   grp: "birds",
   cnt: "United States",
   // ...
-} as XentoCanto.XCQueryOption;
+} as XenoCanto.XCQueryOption;
 
 // Begin initial search
 console.log("Fetching page 1...");
-const result = await XentoCanto.search(query, options);
+const result = await XenoCanto.search(query, options);
 
 // Print first recording data from response
 console.log(result.xcResponse.recordings[0]);
@@ -104,7 +104,7 @@ if (numPages > 1) {
   for (let page = 2; page < numPages; page++) {
     // Begin next search
     console.log(`Fetching page ${page}/${numPages}...`);
-    const result = await XentoCanto.search(query, options, page); // Here we pass the original query and options with a new page
+    const result = await XenoCanto.search(query, options, page); // Here we pass the original query and options with a new page
 
     // Print first recording data from response
     console.log(result.xcResponse.recordings[0]);
@@ -126,12 +126,12 @@ For development purpose, the Base URL can be changed as follows:
 ```ts
 // Create query and options
 const query = "Owl";
-const options = {} as XentoCanto.XCQueryOption;
+const options = {} as XenoCanto.XCQueryOption;
 const additionalOptions = {
   baseUrl: "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b?query=", // A fake JSON server URL
-} as XentoCanto.AdditionalWrapperOption;
+} as XenoCanto.AdditionalWrapperOption;
 
-const result = await XentoCanto.search(query, options, 1, additionalOptions);
+const result = await XenoCanto.search(query, options, 1, additionalOptions);
 ```
 
 ### Note
