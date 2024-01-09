@@ -29,7 +29,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky install"
   },
   "author": {
     "name": "Joe Siu",
@@ -42,6 +43,9 @@
     }
   ],
   "devDependencies": {
+    "@commitlint/cli": "^18.4.4",
+    "@commitlint/config-conventional": "^18.4.4",
+    "husky": "^8.0.3",
     "prettier": "3.1.1",
     "ts-node": "^10.9.2",
     "tsup": "^8.0.1",
