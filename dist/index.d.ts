@@ -442,24 +442,24 @@ declare function constructQueryUrl(baseUrl: string, query: string, options?: XCQ
  * @param {XCQueryOption} option - The XCQueryOption object to convert.
  * @return {string} The URL-encoded string representation of the XCQueryOption object.
  */
-declare function stringFromXCQueryOption(option: XCQueryOption): string;
+declare function convertXCQueryOptionToString(option: XCQueryOption): string;
 /**
  * Takes a JSON object and converts it into an XCResponse object.
  *
  * @param {any} json - The JSON object to be converted.
- * @return {XCResponse} - The converted XCResponse object.
+ * @return {XCResponse} The converted XCResponse object.
  */
-declare function XCResponseFromJson(json: any): XCResponse;
+declare function convertJsonToXCResponse(json: any): XCResponse;
 
 declare const BASE_URL = "https://www.xeno-canto.org/api/2/recordings?query=";
 /**
  * Searches for a query and returns the response and XC response.
  *
  * @param {string} query - The query to search for.
- * @param {XCQueryOption} [options] - The options for the search query.
+ * @param {XCQueryOption} [options] - Options for the search query.
  * @param {number} [page] - The page parameter is optional and is only needed if the results from a given search don't fit in a single page. If specified, page must be an integer between 1 and XCResponse.numPages.
  * @param {AdditionalWrapperOption} [additionalOptions] - Additional options for this wrapper.
- * @return {Promise<{ response: Response; xcResponse: XCResponse }>} - A promise that resolves to an object containing the response from fetch and a XCResponse object.
+ * @return {Promise<{ response: Response; xcResponse: XCResponse }>} A promise that resolves to an object containing the response from fetch and a XCResponse object.
  */
 declare function search(query: string, options?: XCQueryOption, page?: number, additionalOptions?: AdditionalWrapperOption): Promise<{
     url: string;
@@ -467,4 +467,4 @@ declare function search(query: string, options?: XCQueryOption, page?: number, a
     xcResponse: XCResponse;
 }>;
 
-export { type AdditionalWrapperOption, BASE_URL, type XCQueryOption, type XCRecording, type XCResponse, XCResponseFromJson, constructQueryUrl, search, stringFromXCQueryOption };
+export { type AdditionalWrapperOption, BASE_URL, type XCQueryOption, type XCRecording, type XCResponse, constructQueryUrl, convertJsonToXCResponse, convertXCQueryOptionToString, search };

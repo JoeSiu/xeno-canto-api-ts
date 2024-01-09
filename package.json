@@ -9,8 +9,12 @@
   "bugs": {
     "url": "https://github.com/JoeSiu/xeno-canto-api-ts/issues"
   },
-  "main": "dist/src/",
-  "types": "dist/types/",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "xeno-canto",
     "API",
@@ -24,6 +28,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "dev": "tsup --watch",
     "test": "vitest"
   },
   "author": {

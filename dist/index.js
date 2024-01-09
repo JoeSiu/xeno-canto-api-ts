@@ -41,10 +41,10 @@ var __async = (__this, __arguments, generator) => {
 var src_exports = {};
 __export(src_exports, {
   BASE_URL: () => BASE_URL,
-  XCResponseFromJson: () => XCResponseFromJson,
   constructQueryUrl: () => constructQueryUrl,
-  search: () => search,
-  stringFromXCQueryOption: () => stringFromXCQueryOption
+  convertJsonToXCResponse: () => convertJsonToXCResponse,
+  convertXCQueryOptionToString: () => convertXCQueryOptionToString,
+  search: () => search
 });
 module.exports = __toCommonJS(src_exports);
 
@@ -58,7 +58,7 @@ function constructQueryUrl(baseUrl, query, options, page) {
     }
   }
   if (options) {
-    url += stringFromXCQueryOption(options);
+    url += convertXCQueryOptionToString(options);
   }
   if (page) {
     url += `&page=${page}`;
@@ -66,13 +66,13 @@ function constructQueryUrl(baseUrl, query, options, page) {
   url = url.replace(/\s+/g, "+");
   return url;
 }
-function stringFromXCQueryOption(option) {
+function convertXCQueryOptionToString(option) {
   if (!option) {
     return "";
   }
   return Object.entries(option).map(([key, value]) => `${key}:"${value != null ? value : ""}"`).join(" ");
 }
-function XCResponseFromJson(json) {
+function convertJsonToXCResponse(json) {
   var _a;
   return {
     numRecordings: Number(json["numRecordings"]),
@@ -156,7 +156,7 @@ function search(query, options, page, additionalOptions) {
     try {
       const rawResponse = yield fetch(url);
       const json = yield rawResponse.json();
-      const xcResponse = XCResponseFromJson(json);
+      const xcResponse = convertJsonToXCResponse(json);
       if (xcResponse.error) {
         Promise.reject(
           new Error(
@@ -176,9 +176,9 @@ function search(query, options, page, additionalOptions) {
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   BASE_URL,
-  XCResponseFromJson,
   constructQueryUrl,
-  search,
-  stringFromXCQueryOption
+  convertJsonToXCResponse,
+  convertXCQueryOptionToString,
+  search
 });
 //# sourceMappingURL=index.js.map
