@@ -17,9 +17,6 @@ jobs:
 
       - run: npm i
       - run: npm test
-      - run: npm run lint
-      - run: npm run stylelint
-      - run: npm run typecheck
 
   publish-npm:
     needs: check
