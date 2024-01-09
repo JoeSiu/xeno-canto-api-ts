@@ -30,7 +30,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "vitest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "bumpp --commit --tag --push"
   },
   "author": {
     "name": "Joe Siu",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
+    "bumpp": "^9.2.1",
     "husky": "^8.0.3",
     "prettier": "3.1.1",
     "ts-node": "^10.9.2",
