@@ -6,13 +6,13 @@
 
 ## Intro
 
-Aa Node.js implementation with TypeScript support for the [xeno-canto.org]() API 2.0. It provides an easy way to search for various bird and wildlife sound recordings.
+Aa Node.js implementation with TypeScript support for the [xeno-canto.org](https://xeno-canto.org) API 2.0. It provides an easy way to search for various bird and wildlife sound recordings.
 
 ## Install
 
 To install, run the following command in your terminal:
 
-```
+```bash
 npm install xeno-canto-api-ts
 ```
 
@@ -25,8 +25,6 @@ To use `xeno-canto-api-ts` in your Node.js project, you need to import it as fol
 ```ts
 import * as XentoCanto from "xeno-canto-api-ts";
 ```
-
-
 
 ### Simple Search
 
@@ -44,14 +42,11 @@ XentoCanto.search("Owl").then((result) => {
 });
 ```
 
-
 If the search is successful, the `search` method will return an object with the following properties:
 
 * `url`: The query URL used for the search
 * `response`: The original Response object from the fetch
 * `xrResponse`: An `XCResponse` object that contains the fetched data
-
-
 
 You can access the data like this:
 
@@ -59,8 +54,6 @@ You can access the data like this:
 console.log(result.xcResponse.numRecordings) // Total number of recordings
 console.log(result.xcResponse.recordings[0].file) // The first recording result's sound file download URL
 ```
-
-
 
 ### Advanced Search
 
@@ -78,10 +71,8 @@ const options = {
 const result = await XentoCanto.search(query, options);
 ```
 
-- Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`, for example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
-- Any other non-specified properties can also be added to the options list in case of a future update to the API, but this also means no error will be shown and results will always return 0 entry.
-
-
+* Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`, for example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
+* Any other non-specified properties can also be added to the options list in case of a future update to the API, but this also means no error will be shown and results will always return 0 entry.
 
 #### Multiple Pages
 
@@ -124,13 +115,9 @@ if (numPages > 1) {
 }
 ```
 
-
-
 ### Additional Options
 
 The wrapper also provides additional options by passing a `AdditionalWrapperOption` object to the `search` method
-
-
 
 ### Change API Base URL
 
@@ -149,6 +136,4 @@ const result = await XentoCanto.search(query, options, 1, additionalOptions);
 
 ### Note
 
-To learn more about the query parmeters, see [https://xeno-canto.org/explore/api]() and [https://xeno-canto.org/help/search]().
-
----
+To learn more about the query parmeters, see [https://xeno-canto.org/explore/api](https://xeno-canto.org/explore/api) and [https://xeno-canto.org/help/search](https://xeno-canto.org/help/search).
