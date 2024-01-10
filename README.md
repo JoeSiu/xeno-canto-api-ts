@@ -72,8 +72,8 @@ const options = {
 const result = await XenoCanto.search(query, options);
 ```
 
-* Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`, for example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
-* Any other non-specified properties can also be added to the options list in case of a future update to the API, but this also means no error will be shown and results will always return 0 entry.
+* Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`. For example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
+* The options list can accept additional properties that are not specified in the current API documentation, in case of future updates. However, this will also suppress any error messages and may return an empty result.
 
 #### Multiple Pages
 
