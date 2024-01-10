@@ -1,3 +1,6 @@
+/**
+ * Represents the search options for querying.
+ */
 export interface XCQueryOption {
   /**
    * Group
@@ -252,14 +255,17 @@ export interface XCQueryOption {
    */
   smp?: number | string;
   /**
-   * Any other custom tags not in the API for compatibility
+   * Any other custom tags not in the API for compatibility.
    */
   [rest: string]: number | string | undefined;
 }
 
+/**
+ * Represents additional options for the wrapper.
+ */
 export interface AdditionalWrapperOption {
   /**
-   * Override the default BASE_URL
+   * Override the default BASE_URL.
    */
   baseUrl?: string;
 }

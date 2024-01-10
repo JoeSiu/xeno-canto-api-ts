@@ -2,8 +2,7 @@ import { XCQueryOption } from "../types/query";
 import { XCRecording, XCResponse } from "../types/response";
 
 /**
- * Constructs a query URL by appending the provided query string to the base URL and
- * optionally including additional query options.
+ * Constructs a query URL by appending the provided query string to the base URL and optionally including additional query options.
  *
  * @param {string} baseUrl - The base URL to which the query string will be appended.
  * @param {string} query - The query string to be appended to the base URL.
@@ -41,10 +40,10 @@ export function constructQueryUrl(
 }
 
 /**
- * Converts an XCQueryOption object to a URL-encoded string.
+ * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
  *
  * @param {XCQueryOption} option - The XCQueryOption object to convert.
- * @return {string} The URL-encoded string representation of the XCQueryOption object.
+ * @return {string} The formatted string representation of the XCQueryOption object.
  */
 export function convertXCQueryOptionToString(option: XCQueryOption): string {
   if (!option) {
