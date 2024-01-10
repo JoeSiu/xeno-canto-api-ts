@@ -137,6 +137,6 @@ const result = await XenoCanto.search(query, options, 1, additionalOptions);
 
 ## Resources
 
-Please refer to the [documentation](https://joesiu.github.io/xeno-canto-api-ts/) for details.
+Please refer to the [documentation](https://joesiu.github.io/xeno-canto-api-ts/) for details and API references.
 
-To learn more about the query parmeters, see [https://xeno-canto.org/explore/api](https://xeno-canto.org/explore/api) and [https://xeno-canto.org/help/search](https://xeno-canto.org/help/search).
+To learn more about the Xeno Canto's query parmeters, see [https://xeno-canto.org/explore/api](https://xeno-canto.org/explore/api) and [https://xeno-canto.org/help/search](https://xeno-canto.org/help/search).
