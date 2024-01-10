@@ -4,7 +4,7 @@
 
 [![NPM Version](https://img.shields.io/npm/v/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![npm bundle size](https://img.shields.io/bundlephobia/min/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![MIT License](https://img.shields.io/badge/license-GPL-blue)](https://github.com/JoeSiu/xeno-canto-api-ts/blob/main/LICENSE) [![Build Status](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml/badge.svg)](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml)
 
-## Intro
+## Introduction
 
 Aa Node.js implementation with TypeScript support for the [xeno-canto.org](https://xeno-canto.org) API 2.0. It provides an easy way to search for various bird and wildlife sound recordings.
 
@@ -32,6 +32,7 @@ You can pass a string query to the `search` method like this:
 
 ```ts
 const result = await XenoCanto.search("Owl");
+// Do something with result
 ```
 
 or
@@ -134,6 +135,8 @@ const additionalOptions = {
 const result = await XenoCanto.search(query, options, 1, additionalOptions);
 ```
 
-### Note
+## Resources
+
+Please refer to the [documentation](https://joesiu.github.io/xeno-canto-api-ts/) for details.
 
 To learn more about the query parmeters, see [https://xeno-canto.org/explore/api](https://xeno-canto.org/explore/api) and [https://xeno-canto.org/help/search](https://xeno-canto.org/help/search).
