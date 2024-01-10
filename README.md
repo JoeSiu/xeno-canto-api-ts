@@ -6,7 +6,7 @@
 
 ## Introduction
 
-Aa Node.js implementation with TypeScript support for the [xeno-canto.org](https://xeno-canto.org) API 2.0. It provides an easy way to search for various bird and wildlife sound recordings.
+A Node.js implementation with TypeScript support for the [xeno-canto.org](https://xeno-canto.org) API 2.0. It provides an easy way to search for various bird and wildlife sound recordings.
 
 ## Install
 
