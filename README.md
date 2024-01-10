@@ -46,12 +46,13 @@ XenoCanto.search("Owl").then((result) => {
 If the search is successful, the `search` method will return an object with the following properties:
 
 * `url`: The query URL used for the search
-* `response`: The original Response object from the fetch
+* `rawResponse`: The original Response object from the fetch
 * `xrResponse`: An `XCResponse` object that contains the fetched data
 
 You can access the data like this:
 
 ```ts
+console.log(result.rawResponse.status) //Response status code, e.g., 200
 console.log(result.xcResponse.numRecordings) // Total number of recordings
 console.log(result.xcResponse.recordings[0].file) // The first recording result's sound file download URL
 ```
