@@ -26,6 +26,12 @@ To use `xeno-canto-api-ts` in your Node.js project, you need to import it as fol
 import * as XenoCanto from "xeno-canto-api-ts";
 ```
 
+or
+
+```ts
+const XenoCanto = require('xeno-canto-api-ts');
+```
+
 ### Simple Search
 
 You can pass a string query to the `search` method like this:
