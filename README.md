@@ -127,7 +127,7 @@ if (numPages > 1) {
 
 The wrapper also provides additional options by passing a `AdditionalWrapperOption` object to the `search` method
 
-### Change API Base URL
+#### Change API Base URL
 
 For development purpose, the Base URL can be changed as follows:
 
