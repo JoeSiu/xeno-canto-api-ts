@@ -167,6 +167,9 @@
 <a id="md:usage" class="tsd-anchor"></a><h2><a href="#md:usage">Usage</a></h2><a id="md:import" class="tsd-anchor"></a><h3><a href="#md:import">Import</a></h3><p>To use <code>xeno-canto-api-ts</code> in your Node.js project, you need to import it as follows:</p>
 <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> </span><span class="hl-4">*</span><span class="hl-1"> </span><span class="hl-3">as</span><span class="hl-1"> </span><span class="hl-5">XenoCanto</span><span class="hl-1"> </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;xeno-canto-api-ts&quot;</span><span class="hl-1">;</span>
 </code><button>Copy</button></pre>
+<p>or</p>
+<pre><code class="language-ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-6">XenoCanto</span><span class="hl-1"> = </span><span class="hl-0">require</span><span class="hl-1">(</span><span class="hl-2">&#39;xeno-canto-api-ts&#39;</span><span class="hl-1">);</span>
+</code><button>Copy</button></pre>
 <a id="md:simple-search" class="tsd-anchor"></a><h3><a href="#md:simple-search">Simple Search</a></h3><p>You can pass a string query to the <code>search</code> method like this:</p>
 <pre><code class="language-ts"><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-6">result</span><span class="hl-1"> = </span><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-5">XenoCanto</span><span class="hl-1">.</span><span class="hl-0">search</span><span class="hl-1">(</span><span class="hl-2">&quot;Owl&quot;</span><span class="hl-1">);</span><br/><span class="hl-7">// Do something with result</span>
 </code><button>Copy</button></pre>
