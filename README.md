@@ -2,7 +2,7 @@
 
 > A TypeScript wrapper for the [Xeno Canto](https://xeno-canto.org/) API with no dependencies.
 
-[![NPM Version](https://img.shields.io/npm/v/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![npm bundle size](https://img.shields.io/bundlephobia/min/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![MIT License](https://img.shields.io/badge/license-GPL-blue)](https://github.com/JoeSiu/xeno-canto-api-ts/blob/main/LICENSE) [![Build Status](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml/badge.svg)](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml)
+[![NPM Version](https://img.shields.io/npm/v/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![GitHub Release](https://img.shields.io/github/v/release/JoeSiu/xeno-canto-api-ts)](https://github.com/JoeSiu/xeno-canto-api-ts/releases/latest) [![npm bundle size](https://img.shields.io/bundlephobia/min/xeno-canto-api-ts)](https://www.npmjs.com/package/xeno-canto-api-ts) [![MIT License](https://img.shields.io/badge/license-GPL-blue)](https://github.com/JoeSiu/xeno-canto-api-ts/blob/main/LICENSE) [![Build Status](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml/badge.svg)](https://github.com/JoeSiu/xeno-canto-api-ts/actions/workflows/ci.yaml) [![GitHub Repo stars](https://img.shields.io/github/stars/JoeSiu/xeno-canto-api-ts)](https://github.com/JoeSiu/xeno-canto-api-ts)
 
 ## Introduction
 
