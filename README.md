@@ -142,6 +142,10 @@ const additionalOptions = {
 const result = await XenoCanto.search(query, options, 1, additionalOptions);
 ```
 
+## Limitation
+
+Due to the API limitation, only English queries are supported, and the query should based on scientific or common names. You may refer to the [IOC World Bird List - Multilingual Version](https://www.worldbirdnames.org/new/ioc-lists/master-list-2/) for looking up and mapping the corresponding names.
+
 ## Resources
 
 Please refer to the [documentation](https://joesiu.github.io/xeno-canto-api-ts/) for details and API references.
