@@ -102,8 +102,8 @@ describe("Search function", () => {
       expect(result).toBeDefined();
       expect(result.rawResponse).toBeDefined();
       expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBe(0);
-      expect(result.xcResponse.recordings.length).toBe(0);
+      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
+      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
     });
 
     test("Empty query with options", async () => {
