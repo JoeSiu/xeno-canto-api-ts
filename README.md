@@ -84,7 +84,7 @@ const result = await XenoCanto.search(query, options);
 
 #### Multiple Pages
 
-For results that have multiple pages, you can pass the `page` parameter to the `search` method
+For results that have multiple pages, you can pass the `page` parameter to the `search` method:
 
 ```ts
 // Create query and options
@@ -140,6 +140,14 @@ const additionalOptions = {
 } as XenoCanto.AdditionalWrapperOption;
 
 const result = await XenoCanto.search(query, options, 1, additionalOptions);
+```
+
+#### Custom Data Fetching
+
+If you wish to implement your own data retrieval methods instead of using the Fetch API, you can utilize the `convertJsonToXCResponse` method by passing the JSON response:
+
+```ts
+const xcResponse = XenoCanto.convertJsonToXCResponse(json);
 ```
 
 ## Limitation
