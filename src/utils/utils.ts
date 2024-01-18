@@ -8,33 +8,40 @@ import { XCRecording, XCResponse } from "../types/response";
  * @param {string} query - The query string to be appended to the base URL.
  * @param {XCQueryOption} [options] - Optional additional query options.
  * @param {number} [page] - Optional page number.
- * @return {string} The constructed query URL.
+ * @return {URL} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
   query: string,
   options?: XCQueryOption,
   page?: number,
-): string {
-  let url = baseUrl;
+): URL {
+  let url = new URL(baseUrl);
+  let parms = new URLSearchParams();
 
-  if (query.trim()) {
-    url += query.trim();
+  // Append query to search parameters
+  const processedQuery = query.trim();
+  if (processedQuery) {
+    parms.append("query", processedQuery);
+  } else {
+    parms.append("query", `""`); // As an empty query is not allowed
+  }
 
-    if (options) {
-      url += " ";
+  // Append options to search parameters
+  if (options) {
+    const optionParms = convertXCQueryOptionToSearchParams(options);
+    for (let [key, val] of optionParms.entries()) {
+      parms.append(key, `"${val}"`);
     }
   }
 
-  if (options) {
-    url += convertXCQueryOptionToString(options);
-  }
-
+  // Append page to search parameters
   if (page) {
-    url += `&page=${page}`;
+    parms.append("page", String(page));
   }
 
-  url = url.replace(/\s+/g, "+"); // Replace spaces with +
+  // Set search parameters
+  url.search = parms.toString();
 
   return url;
 }
@@ -43,16 +50,22 @@ export function constructQueryUrl(
  * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
  *
  * @param {XCQueryOption} option - The XCQueryOption object to convert.
- * @return {string} The formatted string representation of the XCQueryOption object.
+ * @return {URLSearchParams} The URLSearchParams object representing the XCQueryOption object.
  */
-export function convertXCQueryOptionToString(option: XCQueryOption): string {
+export function convertXCQueryOptionToSearchParams(
+  option: XCQueryOption,
+): URLSearchParams {
+  const params = new URLSearchParams();
+
   if (!option) {
-    return "";
+    return params;
   }
 
-  return Object.entries(option)
-    .map(([key, value]) => `${key}:"${value ?? ""}"`)
-    .join(" ");
+  Object.entries(option).forEach(([key, value]) => {
+    params.append(key, String(value ?? ""));
+  });
+
+  return params;
 }
 
 /**
