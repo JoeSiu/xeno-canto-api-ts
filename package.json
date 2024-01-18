@@ -1,6 +1,6 @@
 {
   "name": "xeno-canto-api-ts",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A TypeScript wrapper for the Xeno Canto API",
   "homepage": "https://joesiu.github.io/xeno-canto-api-ts",
   "repository": {
