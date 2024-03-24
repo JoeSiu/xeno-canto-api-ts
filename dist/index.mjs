@@ -21,7 +21,12 @@ var __async = (__this, __arguments, generator) => {
 
 // src/utils/utils.ts
 function constructQueryUrl(baseUrl, query, options, page) {
-  let url = new URL(baseUrl);
+  let url;
+  try {
+    url = new URL(baseUrl);
+  } catch (error) {
+    url = baseUrl;
+  }
   let parms = new URLSearchParams();
   const processedQuery = query.trim();
   if (processedQuery) {
@@ -38,7 +43,12 @@ function constructQueryUrl(baseUrl, query, options, page) {
   if (page) {
     parms.append("page", String(page));
   }
-  url.search = parms.toString();
+  if (typeof url === "object" && url instanceof URL) {
+    url.search = parms.toString();
+  } else {
+    const queryString = parms.toString();
+    url += (url.includes("?") ? "&" : "?") + queryString;
+  }
   return url;
 }
 function convertXCQueryOptionToSearchParams(option) {
@@ -143,7 +153,7 @@ function search(query, options, page, additionalOptions) {
           )
         );
       }
-      return Promise.resolve({ url, rawResponse, xcResponse });
+      return Promise.resolve({ url: new URL(url), rawResponse, xcResponse });
     } catch (error) {
       console.error(error);
       return Promise.reject(

@@ -444,9 +444,9 @@ interface XCRecording {
  * @param {string} query - The query string to be appended to the base URL.
  * @param {XCQueryOption} [options] - Optional additional query options.
  * @param {number} [page] - Optional page number.
- * @return {URL} The constructed query URL.
+ * @return {URL | string} The constructed query URL.
  */
-declare function constructQueryUrl(baseUrl: string, query: string, options?: XCQueryOption, page?: number): URL;
+declare function constructQueryUrl(baseUrl: string, query: string, options?: XCQueryOption, page?: number): URL | string;
 /**
  * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
  *
