@@ -52,7 +52,7 @@ async function search(
       );
     }
 
-    return Promise.resolve({ url, rawResponse, xcResponse });
+    return Promise.resolve({ url: new URL(url), rawResponse, xcResponse });
   } catch (error: any) {
     // Error handling
     console.error(error);
