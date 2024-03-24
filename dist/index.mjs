@@ -21,27 +21,35 @@ var __async = (__this, __arguments, generator) => {
 
 // src/utils/utils.ts
 function constructQueryUrl(baseUrl, query, options, page) {
-  let url = baseUrl;
-  if (query.trim()) {
-    url += query.trim();
-    if (options) {
-      url += " ";
-    }
+  let url = new URL(baseUrl);
+  let parms = new URLSearchParams();
+  const processedQuery = query.trim();
+  if (processedQuery) {
+    parms.append("query", processedQuery);
+  } else {
+    parms.append("query", `""`);
   }
   if (options) {
-    url += convertXCQueryOptionToString(options);
+    const optionParms = convertXCQueryOptionToSearchParams(options);
+    for (let [key, val] of optionParms.entries()) {
+      parms.append(key, `"${val}"`);
+    }
   }
   if (page) {
-    url += `&page=${page}`;
+    parms.append("page", String(page));
   }
-  url = url.replace(/\s+/g, "+");
+  url.search = parms.toString();
   return url;
 }
-function convertXCQueryOptionToString(option) {
+function convertXCQueryOptionToSearchParams(option) {
+  const params = new URLSearchParams();
   if (!option) {
-    return "";
+    return params;
   }
-  return Object.entries(option).map(([key, value]) => `${key}:"${value != null ? value : ""}"`).join(" ");
+  Object.entries(option).forEach(([key, value]) => {
+    params.append(key, String(value != null ? value : ""));
+  });
+  return params;
 }
 function convertJsonToXCResponse(json) {
   var _a;
@@ -107,7 +115,7 @@ function convertJsonToXCResponse(json) {
 }
 
 // src/index.ts
-var BASE_URL = "https://www.xeno-canto.org/api/2/recordings?query=";
+var BASE_URL = "https://www.xeno-canto.org/api/2/recordings";
 function search(query, options, page, additionalOptions) {
   return __async(this, null, function* () {
     var _a;
@@ -131,7 +139,7 @@ function search(query, options, page, additionalOptions) {
       if (xcResponse.error) {
         Promise.reject(
           new Error(
-            `API returned error '${xcResponse.error}': ${xcResponse.message}`
+            `Xeno-Canto API returned error '${xcResponse.error}': ${xcResponse.message}`
           )
         );
       }
@@ -148,7 +156,7 @@ export {
   BASE_URL,
   constructQueryUrl,
   convertJsonToXCResponse,
-  convertXCQueryOptionToString,
+  convertXCQueryOptionToSearchParams,
   search
 };
 //# sourceMappingURL=index.mjs.map

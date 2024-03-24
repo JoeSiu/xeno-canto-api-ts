@@ -32,7 +32,7 @@
     "dev": "tsup --watch",
     "test": "vitest",
     "prepare": "husky install",
-    "release": "bumpp --commit --tag --push",
+    "release": "npm run build && bumpp --commit --tag --push",
     "docs": "typedoc --options typedoc.json"
   },
   "author": {
