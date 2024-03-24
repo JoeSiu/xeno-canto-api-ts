@@ -8,15 +8,23 @@ import { XCRecording, XCResponse } from "../types/response";
  * @param {string} query - The query string to be appended to the base URL.
  * @param {XCQueryOption} [options] - Optional additional query options.
  * @param {number} [page] - Optional page number.
- * @return {URL} The constructed query URL.
+ * @return {URL | string} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
   query: string,
   options?: XCQueryOption,
   page?: number,
-): URL {
-  let url = new URL(baseUrl);
+): URL | string {
+  let url: URL | string;
+
+  try {
+    url = new URL(baseUrl);
+  } catch (error) {
+    // If the base URL is not a valid URL, fallback to a string URL
+    url = baseUrl;
+  }
+
   let parms = new URLSearchParams();
 
   // Append query to search parameters
@@ -41,7 +49,12 @@ export function constructQueryUrl(
   }
 
   // Set search parameters
-  url.search = parms.toString();
+  if (typeof url === "object" && url instanceof URL) {
+    url.search = parms.toString();
+  } else {
+    const queryString = parms.toString();
+    url += (url.includes("?") ? "&" : "?") + queryString;
+  }
 
   return url;
 }

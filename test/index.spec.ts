@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AdditionalWrapperOption, XCQueryOption, search } from "../src";
+import { AdditionalWrapperOption, XCQueryOption, constructQueryUrl, convertJsonToXCResponse, search } from "../src";
 
 describe("Search function", () => {
   beforeEach(async () => {
@@ -220,7 +220,7 @@ describe("Search function", () => {
       };
       const additionalOptions: AdditionalWrapperOption = {
         baseUrl:
-          "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b?query=", // Fake data
+          "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b", // Fake data
       };
 
       const result = await search(query, options, undefined, additionalOptions);
@@ -233,6 +233,42 @@ describe("Search function", () => {
       expect(result.xcResponse).toBeDefined();
       expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
       expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
+    });
+
+    test("Custom fetch (URL object)", async () => {
+      const baseUrl = "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b"
+      const query = "Sparrow";
+      const options: XCQueryOption = {
+        grp: "birds",
+        cnt: "Brazil",
+      };
+
+      const url = constructQueryUrl(baseUrl, query, options);
+
+      const response = await fetch(url);
+      const json = await response.json();
+      const result = convertJsonToXCResponse(json);
+
+      console.log(`Requested URL: ${url}`);
+      console.log(`numRecordings: ${result.numRecordings}`);
+      console.log(`numPages: ${result.numPages}`);
+      expect(result).toBeDefined();
+      expect(result.numRecordings).toBeGreaterThan(0);
+      expect(result.recordings.length).toBeGreaterThan(0);
+    });
+
+    test("Custom fetch (string object)", async () => {
+      const baseUrl = "/api/xeno-canto"
+      const query = "Sparrow";
+      const options: XCQueryOption = {
+        grp: "birds",
+        cnt: "Brazil",
+      };
+
+      const url = constructQueryUrl(baseUrl, query, options);
+
+      console.log(`Requested URL: ${url}`);
+      expect(url).toBeTypeOf("string");
     });
   });
 });
