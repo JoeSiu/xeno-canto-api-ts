@@ -7,7 +7,7 @@ export interface XCQueryOption {
    *
    * Use the grp tag to narrow down your search to a specific group. This tag is particularly useful in combination with one of the other tags. Valid group values are birds, grasshoppers and bats. You can also use their respective ids (1 to 3), so grp:2 will restrict your search to grasshoppers. Soundscapes are a special case, as these recordings may include multiple groups. Use grp:soundscape or grp:0 to search these.
    */
-  grp?: "soundscape" | "birds" | "grasshoppers" | "bats" | 0 | 1 | 2 | 3;
+  grp?: "soundscape" | "birds" | "grasshoppers" | "bats" | 0 | 1 | 2 | 3 | (string & {});
   /**
    * Genus/Subspecies
    *
@@ -43,13 +43,13 @@ export interface XCQueryOption {
    *
    * Two tags (seen and playback respectively) that previously were stored as part of Recordist remarks, but now can be used independently. Both only accept yes and no as input. For example, use seen:yes playback:no to search for recordings where the animal was seen, but not lured by playback.
    */
-  seen?: "yes" | "no";
+  seen?: "yes" | "no" | (string & {});
   /**
    * Animal seen/Playback used
    *
    * Two tags (seen and playback respectively) that previously were stored as part of Recordist remarks, but now can be used independently. Both only accept yes and no as input. For example, use seen:yes playback:no to search for recordings where the animal was seen, but not lured by playback.
    */
-  playback?: "yes" | "no";
+  playback?: "yes" | "no" | (string & {});
   /**
    * Geographic coordinates
    *
@@ -88,28 +88,29 @@ export interface XCQueryOption {
    * Up until 2022, the 'type' tag used to search a free text field. We have retained the option to search for non-standardized sound types by using the othertype tag. This tag also accepts a 'matches' operator, e.g. othertype:"=wing flapping".
    */
   type?:
-    | "aberrant"
-    | "alarm call"
-    | "begging call"
-    | "call"
-    | "calling song"
-    | "courtship song"
-    | "dawn song"
-    | "distress call"
-    | "disturbance song"
-    | "drumming"
-    | "duet"
-    | "echolocation"
-    | "female song"
-    | "flight call"
-    | "flight song"
-    | "imitation"
-    | "nocturnal flight call"
-    | "rivalry song"
-    | "searching song"
-    | "social call"
-    | "song"
-    | "subsong";
+  | "aberrant"
+  | "alarm call"
+  | "begging call"
+  | "call"
+  | "calling song"
+  | "courtship song"
+  | "dawn song"
+  | "distress call"
+  | "disturbance song"
+  | "drumming"
+  | "duet"
+  | "echolocation"
+  | "female song"
+  | "flight call"
+  | "flight song"
+  | "imitation"
+  | "nocturnal flight call"
+  | "rivalry song"
+  | "searching song"
+  | "social call"
+  | "song"
+  | "subsong"
+  | (string & {});
   /**
    * Sound type
    *
@@ -123,29 +124,30 @@ export interface XCQueryOption {
    *
    * Formerly included under 'sound types', the sex tag can now be used independently. Valid values for this tag are: female, male. This tag always uses a 'matches' operator.
    */
-  sex?: "female" | "male";
+  sex?: "female" | "male" | (string & {});
   /**
    * Life stage
    *
    * Values of the stage tag were previously included under 'sound types' as well. Valid values are: adult, juvenile, nestling, nymph, subadult. This tag always uses a 'matches' operator.
    */
-  state?: "adult" | "juvenile" | "nestling" | "nymph" | "subadult";
+  state?: "adult" | "juvenile" | "nestling" | "nymph" | "subadult" | (string & {});
   /**
    * Recording method
    *
    * The method tag accepts the following, group-dependent values: emerging from roost, field recording, fluorescent light tag, hand-release, in enclosure, in net, in the hand, roosting, roped, studio recording. Do not forget to enclose the term between double quotes! This tag always uses a 'matches' operator.
    */
   method?:
-    | "emerging from roost"
-    | "field recording"
-    | "fluorescent light tag"
-    | "hand-release"
-    | "in enclosure"
-    | "in net"
-    | "in the hand"
-    | "roosting"
-    | "roped"
-    | "studio recording";
+  | "emerging from roost"
+  | "field recording"
+  | "fluorescent light tag"
+  | "hand-release"
+  | "in enclosure"
+  | "in net"
+  | "in the hand"
+  | "roosting"
+  | "roped"
+  | "studio recording"
+  | (string & {});
   /**
    * XC number
    *
@@ -187,7 +189,7 @@ export interface XCQueryOption {
    *
    * The area tag allows you to search by world area. Valid values for this tag are africa, america, asia, australia, europe.
    */
-  area?: "africa" | "america" | "asia" | "australia" | "europe";
+  area?: "africa" | "america" | "asia" | "australia" | "europe" | (string & {});
   /**
    * Additional search tags
    *
@@ -235,7 +237,7 @@ export interface XCQueryOption {
    *
    * The auto tag searches for automatic (non-supervised) recordings. This tag accepts yes and no.
    */
-  auto?: "yes" | "no";
+  auto?: "yes" | "no" | (string & {});
   /**
    * Additional search tags
    *
