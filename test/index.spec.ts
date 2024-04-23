@@ -8,16 +8,20 @@ describe("Search function", () => {
   });
 
   test("Should have response status 200", async () => {
-    const query = "Sparrow";
-    const result = await search(query);
+    const options: XCQueryOption = {
+      query: "Sparrow"
+    }
+    const result = await search(options);
 
     expect(result.rawResponse.status).toBe(200);
   });
 
   describe("Simple search", () => {
     test("Normal query", async () => {
-      const query = "Sparrow";
-      const result = await search(query);
+      const options: XCQueryOption = {
+        query: "Sparrow"
+      }
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -28,8 +32,10 @@ describe("Search function", () => {
     });
 
     test("Wrong query", async () => {
-      const query = "qwertyuiopasdfghjklzxcvbnm";
-      const result = await search(query);
+      const options: XCQueryOption = {
+        query: "qwertyuiopasdfghjklzxcvbnm"
+      }
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -40,8 +46,10 @@ describe("Search function", () => {
     });
 
     test("Query with whitespaces", async () => {
-      const query = "   Sparrow   ";
-      const result = await search(query);
+      const options: XCQueryOption = {
+        query: "   Sparrow   "
+      }
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -53,8 +61,10 @@ describe("Search function", () => {
     });
 
     test("Query with quotes", async () => {
-      const query = '"Sparrow"';
-      const result = await search(query);
+      const options: XCQueryOption = {
+        query: '"Sparrow"'
+      }
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -66,20 +76,20 @@ describe("Search function", () => {
     });
 
     test("Empty query should throw an error", async () => {
-      await expect(search("")).rejects.toThrowError();
-      await expect(search(" ")).rejects.toThrowError();
-      await expect(search("    ")).rejects.toThrowError();
+      await expect(search({ query: "" })).rejects.toThrowError();
+      await expect(search({ query: " " })).rejects.toThrowError();
+      await expect(search({ query: "    " })).rejects.toThrowError();
     });
   });
 
   describe("Advanced search", () => {
     test("Normal query", async () => {
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
         cnt: "Brazil",
       };
-      const result = await search(query, options);
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -91,11 +101,11 @@ describe("Search function", () => {
     });
 
     test("Query with non-existent tag", async () => {
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         "non-existent-tag": "no",
       };
-      const result = await search(query, options);
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -107,12 +117,12 @@ describe("Search function", () => {
     });
 
     test("Empty query with options", async () => {
-      const query = "";
       const options: XCQueryOption = {
+        query: "",
         cnt: "Brazil",
         q: "A",
       };
-      const result = await search(query, options);
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -124,12 +134,12 @@ describe("Search function", () => {
     });
 
     test("Query with spaced tag", async () => {
-      const query = "Larus brachyrhynchus";
       const options: XCQueryOption = {
+        query: "Larus brachyrhynchus",
         cnt: "United States",
         method: "field recording",
       };
-      const result = await search(query, options);
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -141,11 +151,11 @@ describe("Search function", () => {
     });
 
     test("Query with non-bird group", async () => {
-      const query = "Wood Cricket";
       const options: XCQueryOption = {
+        query: "Wood Cricket",
         grp: "grasshoppers",
       };
-      const result = await search(query, options);
+      const result = await search(options);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -160,13 +170,13 @@ describe("Search function", () => {
       let currentPage = 1;
       const maxPages = 3;
 
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
       };
 
       console.log(`Requesting first page: ${currentPage}/${maxPages}`);
-      const result = await search(query, options, currentPage);
+      const result = await search({ ...options, page: currentPage });
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -175,7 +185,7 @@ describe("Search function", () => {
       while (currentPage < maxPages) {
         currentPage++;
         console.log(`Requesting next page: ${currentPage}/${maxPages}`);
-        const nextResult = await search(query, options, currentPage);
+        const nextResult = await search({ ...options, page: currentPage });
         console.log(`Requested URL: ${nextResult.url}`);
         console.log(
           `recordings.length: ${nextResult.xcResponse.recordings.length}`,
@@ -192,15 +202,15 @@ describe("Search function", () => {
     });
 
     test("Query with non-existent page should throw an error", async () => {
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
         cnt: "Brazil",
         q: "A",
       };
 
       await expect(async () => {
-        const result = await search(query, options);
+        const result = await search(options);
         console.log(`Requested URL: ${result.url}`);
         expect(result).toBeDefined();
         expect(result.rawResponse).toBeDefined();
@@ -213,8 +223,8 @@ describe("Search function", () => {
 
   describe("Additional options", () => {
     test("Override the default BASE_URL", async () => {
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
         cnt: "Brazil",
       };
@@ -223,7 +233,7 @@ describe("Search function", () => {
           "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b", // Fake data
       };
 
-      const result = await search(query, options, undefined, additionalOptions);
+      const result = await search(options, additionalOptions);
 
       console.log(`Requested URL: ${result.url}`);
       console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
@@ -237,13 +247,13 @@ describe("Search function", () => {
 
     test("Custom fetch (URL object)", async () => {
       const baseUrl = "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b"
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
         cnt: "Brazil",
       };
 
-      const url = constructQueryUrl(baseUrl, query, options);
+      const url = constructQueryUrl(baseUrl, options);
 
       const response = await fetch(url);
       const json = await response.json();
@@ -257,15 +267,15 @@ describe("Search function", () => {
       expect(result.recordings.length).toBeGreaterThan(0);
     });
 
-    test("Custom fetch (string object)", async () => {
+    test("Custom fetch (non-valid URL object input)", async () => {
       const baseUrl = "/api/xeno-canto"
-      const query = "Sparrow";
       const options: XCQueryOption = {
+        query: "Sparrow",
         grp: "birds",
         cnt: "Brazil",
       };
 
-      const url = constructQueryUrl(baseUrl, query, options);
+      const url = constructQueryUrl(baseUrl, options);
 
       console.log(`Requested URL: ${url}`);
       expect(url).toBeTypeOf("string");

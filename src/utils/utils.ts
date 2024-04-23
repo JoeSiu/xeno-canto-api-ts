@@ -1,57 +1,40 @@
-import { XCQueryOption } from "../types/query";
-import { XCRecording, XCResponse } from "../types/response";
+import { XCQueryNameDefinition, XCQueryOption } from "../types/query";
+import { XCRecording, XCRecordingNameDefinition, XCResponse, XCResponseNameDefinition } from "../types/response";
 
 /**
  * Constructs a query URL by appending the provided query string to the base URL and optionally including additional query options.
  *
  * @param {string} baseUrl - The base URL to which the query string will be appended.
- * @param {string} query - The query string to be appended to the base URL.
  * @param {XCQueryOption} [options] - Optional additional query options.
- * @param {number} [page] - Optional page number.
  * @return {URL | string} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
-  query: string,
-  options?: XCQueryOption,
-  page?: number,
+  options: XCQueryOption,
 ): URL | string {
   let url: URL | string;
 
+  // Try create a URL object from the base URL
   try {
     url = new URL(baseUrl);
   } catch (error) {
-    // If the base URL is not a valid URL, fallback to a string URL
+    // If the base URL can't be parsed as a valid URL object (e.g., API route), fallback to a string URL
     url = baseUrl;
   }
 
   let parms = new URLSearchParams();
 
-  // Append query to search parameters
-  const processedQuery = query.trim();
-  if (processedQuery) {
-    parms.append("query", processedQuery);
-  } else {
-    parms.append("query", `""`); // As an empty query is not allowed
-  }
-
   // Append options to search parameters
-  if (options) {
-    const optionParms = convertXCQueryOptionToSearchParams(options);
-    for (let [key, val] of optionParms.entries()) {
-      parms.append(key, `"${val}"`);
-    }
+  const optionParms = convertXCQueryOptionToSearchParams(options);
+  for (let [key, val] of optionParms.entries()) {
+    parms.append(key, `"${val}"`);
   }
 
-  // Append page to search parameters
-  if (page) {
-    parms.append("page", String(page));
-  }
-
-  // Set search parameters
+  // Set URL object's search parameters
   if (typeof url === "object" && url instanceof URL) {
     url.search = parms.toString();
   } else {
+    // Create a string URL with the search parameters
     const queryString = parms.toString();
     url += (url.includes("?") ? "&" : "?") + queryString;
   }
@@ -62,19 +45,33 @@ export function constructQueryUrl(
 /**
  * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
  *
- * @param {XCQueryOption} option - The XCQueryOption object to convert.
+ * @param {XCQueryOption} options - The XCQueryOption object to convert.
  * @return {URLSearchParams} The URLSearchParams object representing the XCQueryOption object.
  */
 export function convertXCQueryOptionToSearchParams(
-  option: XCQueryOption,
+  options: XCQueryOption,
 ): URLSearchParams {
   const params = new URLSearchParams();
 
-  if (!option) {
+  if (!options) {
     return params;
   }
 
-  Object.entries(option).forEach(([key, value]) => {
+  // Append query to search parameters
+  const processedQuery = options.query.trim();
+  if (processedQuery) {
+    params.append(XCQueryNameDefinition.query, processedQuery);
+  } else {
+    params.append(XCQueryNameDefinition.query, `""`); // As an empty query is not allowed
+  }
+
+  // Append page to search parameters
+  if (options.page) {
+    params.append(XCQueryNameDefinition.page, String(options.page));
+  }
+
+  // Append rest of options to search parameters
+  Object.entries(options).forEach(([key, value]) => {
     params.append(key, String(value ?? ""));
   });
 
@@ -89,63 +86,63 @@ export function convertXCQueryOptionToSearchParams(
  */
 export function convertJsonToXCResponse(json: any): XCResponse {
   return {
-    numRecordings: Number(json["numRecordings"]),
-    numSpecies: Number(json["numSpecies"]),
-    page: Number(json["page"]),
-    numPages: Number(json["numPages"]),
+    numRecordings: Number(json[XCResponseNameDefinition.numRecordings]),
+    numSpecies: Number(json[XCResponseNameDefinition.numSpecies]),
+    page: Number(json[XCResponseNameDefinition.page]),
+    numPages: Number(json[XCResponseNameDefinition.numPages]),
     recordings:
-      json["recordings"]?.map((recording: any): XCRecording => {
+      json[XCResponseNameDefinition.recordings]?.map((recording: any): XCRecording => {
         return {
-          id: recording["id"],
-          gen: recording["gen"],
-          sp: recording["sp"],
-          ssp: recording["ssp"],
-          group: recording["group"],
-          en: recording["en"],
-          rec: recording["rec"],
-          cnt: recording["cnt"],
-          loc: recording["loc"],
-          lat: recording["lat"],
-          lng: recording["lng"],
-          alt: recording["alt"],
-          type: recording["type"],
-          sex: recording["sex"],
-          stage: recording["stage"],
-          method: recording["method"],
-          url: recording["url"],
-          file: recording["file"],
-          fileName: recording["file-name"],
+          id: recording[XCRecordingNameDefinition.id],
+          gen: recording[XCRecordingNameDefinition.gen],
+          sp: recording[XCRecordingNameDefinition.sp],
+          ssp: recording[XCRecordingNameDefinition.ssp],
+          group: recording[XCRecordingNameDefinition.group],
+          en: recording[XCRecordingNameDefinition.en],
+          rec: recording[XCRecordingNameDefinition.rec],
+          cnt: recording[XCRecordingNameDefinition.cnt],
+          loc: recording[XCRecordingNameDefinition.loc],
+          lat: recording[XCRecordingNameDefinition.lat],
+          lng: recording[XCRecordingNameDefinition.lng],
+          alt: recording[XCRecordingNameDefinition.alt],
+          type: recording[XCRecordingNameDefinition.type],
+          sex: recording[XCRecordingNameDefinition.sex],
+          stage: recording[XCRecordingNameDefinition.stage],
+          method: recording[XCRecordingNameDefinition.method],
+          url: recording[XCRecordingNameDefinition.url],
+          file: recording[XCRecordingNameDefinition.file],
+          fileName: recording[XCRecordingNameDefinition.fileName],
           sono: {
-            small: recording["sono"]["small"],
-            med: recording["sono"]["med"],
-            large: recording["sono"]["large"],
-            full: recording["sono"]["full"],
+            small: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.small],
+            med: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.med],
+            large: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.large],
+            full: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.full],
           },
           osci: {
-            small: recording["osci"]["small"],
-            med: recording["osci"]["med"],
-            large: recording["osci"]["large"],
+            small: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.small],
+            med: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.med],
+            large: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.large],
           },
-          lic: recording["lic"],
-          q: recording["q"],
-          length: recording["length"],
-          time: recording["time"],
-          date: recording["date"],
-          uploaded: recording["uploaded"],
-          also: recording["also"],
-          rmk: recording["rmk"],
-          birdSeen: recording["bird-seen"],
-          animalSeen: recording["animal-seen"],
-          playbackUsed: recording["playback-used"],
-          temp: recording["temp"],
-          regnr: recording["regnr"],
-          auto: recording["auto"],
-          dvc: recording["dvc"],
-          mic: recording["mic"],
-          smp: Number(recording["smp"]),
+          lic: recording[XCRecordingNameDefinition.lic],
+          q: recording[XCRecordingNameDefinition.q],
+          length: recording[XCRecordingNameDefinition.length],
+          time: recording[XCRecordingNameDefinition.time],
+          date: recording[XCRecordingNameDefinition.date],
+          uploaded: recording[XCRecordingNameDefinition.uploaded],
+          also: recording[XCRecordingNameDefinition.also],
+          rmk: recording[XCRecordingNameDefinition.rmk],
+          birdSeen: recording[XCRecordingNameDefinition.birdSeen],
+          animalSeen: recording[XCRecordingNameDefinition.animalSeen],
+          playbackUsed: recording[XCRecordingNameDefinition.playbackUsed],
+          temp: recording[XCRecordingNameDefinition.temp],
+          regnr: recording[XCRecordingNameDefinition.regnr],
+          auto: recording[XCRecordingNameDefinition.auto],
+          dvc: recording[XCRecordingNameDefinition.dvc],
+          mic: recording[XCRecordingNameDefinition.mic],
+          smp: Number(recording[XCRecordingNameDefinition.smp]),
         };
       }) || [],
-    error: json["error"],
-    message: json["message"],
+    error: json[XCResponseNameDefinition.error],
+    message: json[XCResponseNameDefinition.message],
   };
 }

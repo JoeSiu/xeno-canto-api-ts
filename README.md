@@ -26,12 +26,6 @@ To use `xeno-canto-api-ts` in your Node.js project, you need to import it as fol
 import * as XenoCanto from "xeno-canto-api-ts";
 ```
 
-or
-
-```ts
-const XenoCanto = require('xeno-canto-api-ts');
-```
-
 ### Simple Search
 
 You can pass a string query to the `search` method like this:
@@ -44,7 +38,7 @@ const result = await XenoCanto.search("Owl");
 or
 
 ```ts
-XenoCanto.search("Owl").then((result) => {
+XenoCanto.search({query: "Owl"}).then((result) => {
   // Do something with result
 });
 ```
@@ -68,15 +62,15 @@ console.log(result.xcResponse.recordings[0].file) // The first recording result'
 You can pass a `XCQueryOption` object to the `search` method like this:
 
 ```ts
-// Create query and options
-const query = "Eagle";
-const options = {
+// Create options
+const options: XenoCanto.XCQueryOption = {
+  query: "Eagle",
   grp: "birds",
   cnt: "United States",
   // ...
-} as XenoCanto.XCQueryOption;
+};
 
-const result = await XenoCanto.search(query, options);
+const result = await XenoCanto.search(options);
 ```
 
 * Some of the `XCQueryOption` properties accepts operators such as `=`, `>`, `<` or `-`. For example, the recording length property `len` can accept `10`, `">120"` or `"=19.8"`.
@@ -87,17 +81,17 @@ const result = await XenoCanto.search(query, options);
 For results that have multiple pages, you can pass the `page` parameter to the `search` method:
 
 ```ts
-// Create query and options
-const query = "Eagle";
-const options = {
+// Create options
+const options: XenoCanto.XCQueryOption = {
+  query: "Eagle",
   grp: "birds",
   cnt: "United States",
   // ...
-} as XenoCanto.XCQueryOption;
+};
 
 // Begin initial search
 console.log("Fetching page 1...");
-const result = await XenoCanto.search(query, options);
+const result = await XenoCanto.search(options);
 
 // Print first recording data from response
 console.log(result.xcResponse.recordings[0]);
@@ -109,10 +103,10 @@ await new Promise((resolve) => setTimeout(resolve, 1000));
 const numPages = result.xcResponse.numPages;
 if (numPages > 1) {
   // Loop through rest of the pages
-  for (let page = 2; page < numPages; page++) {
+  for (let currentPage = 2; currentPage < numPages; currentPage++) {
     // Begin next search
     console.log(`Fetching page ${page}/${numPages}...`);
-    const result = await XenoCanto.search(query, options, page); // Here we pass the original query and options with a new page
+    const result = await XenoCanto.search({...options, page: currentPage}); // Here we pass the original query and options with a new page
 
     // Print first recording data from response
     console.log(result.xcResponse.recordings[0]);
@@ -132,15 +126,18 @@ The wrapper also provides additional options by passing a `AdditionalWrapperOpti
 For development purpose, the Base URL can be changed as follows:
 
 ```ts
-// Create query and options
-const query = "Owl";
-const options = {} as XenoCanto.XCQueryOption;
+// Create options
+const options: XenoCanto.XCQueryOption = {
+  query: "Owl"
+};
 const additionalOptions = {
-  baseUrl: "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b?query=", // A fake JSON server URL
+  baseUrl: "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b", // A fake JSON server URL
 } as XenoCanto.AdditionalWrapperOption;
 
-const result = await XenoCanto.search(query, options, 1, additionalOptions);
+const result = await XenoCanto.search(options, additionalOptions);
 ```
+
+### Other Usages
 
 #### Custom Data Fetching
 
@@ -149,6 +146,10 @@ If you wish to implement your own data retrieval methods instead of using the Fe
 ```ts
 const xcResponse = XenoCanto.convertJsonToXCResponse(json);
 ```
+
+#### Query Parameters Names
+
+To get the query parameters names / response JSON key names of the Xeno Canto API, you can use the `XCQueryNameDefinition`, `XCResponseNameDefinition` and `XCRecordingNameDefinition` enum, for example, `XCQueryNameDefinition.rec `will return the string `rec`.
 
 ## Limitation
 
