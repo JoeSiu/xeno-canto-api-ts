@@ -1,38 +1,43 @@
 // Import the types and utility functions
-import { AdditionalWrapperOption, XCQueryOption, XCResponse } from "./types";
-import { constructQueryUrl, convertJsonToXCResponse } from "./utils/utils";
+import { XCQueryOption, XCRecordingKey, XCResponse, XCResponseKey } from "./types";
+import { AdditionalConvertOption, constructQueryUrl, convertJsonToXCResponse, sanitizeQuery } from "./utils";
 
 // Define the base URL for the API
 export const BASE_URL = "https://www.xeno-canto.org/api/2/recordings";
 
 /**
+ * Represents additional options for the search function.
+ */
+export interface AdditionalSearchOption extends AdditionalConvertOption {
+  /**
+   * Override the default BASE_URL.
+   */
+  baseUrl?: string;
+}
+
+/**
  * Searches for a query via Fetch API and returns the response and XC response.
  *
  * @param {XCQueryOption} [options] - Options for the search query.
- * @param {AdditionalWrapperOption} [additionalOptions] - Additional options for this wrapper.
+ * @param {AdditionalSearchOption} [additionalOptions] - Additional search options.
  * @return {Promise<{ url: URL, response: Response; xcResponse: XCResponse }>} A promise that resolves to an object containing the query URL, the response from fetch and a XCResponse object.
  */
 async function search(
   options: XCQueryOption,
-  additionalOptions?: AdditionalWrapperOption,
+  additionalOptions?: AdditionalSearchOption,
 ): Promise<{ url: URL; rawResponse: Response; xcResponse: XCResponse }> {
-  // If query is empty and options is not provided, throw an error instantly instead of trying to fetch
-  if (!options.query.trim()) {
-    return Promise.reject(
-      new Error(
-        "Please ensure that the 'query' parameter is not empty or that the 'options' parameter is provided",
-      ),
-    );
-  }
-
-  // Create the query URL
-  const url = constructQueryUrl(
-    additionalOptions?.baseUrl ?? BASE_URL,
-    options,
-  );
-
-  // Fetch the response and parse the JSON
   try {
+    // Sanitize the query
+    options.query = sanitizeQuery(options.query);
+
+    // Create the query URL
+    const url = constructQueryUrl(
+      additionalOptions?.baseUrl ?? BASE_URL,
+      options,
+      { skipSanitizeQuery: additionalOptions?.skipSanitizeQuery || true } // As the query is already sanitized above, we don't need to sanitize it again (unless explicitly set in additionalOptions)
+    );
+
+    // Fetch the response and parse the JSON
     const rawResponse = await fetch(url);
     const json = await rawResponse.json();
     const xcResponse = convertJsonToXCResponse(json);

@@ -1,16 +1,31 @@
-import { XCQueryNameDefinition, XCQueryOption } from "../types/query";
-import { XCRecording, XCRecordingNameDefinition, XCResponse, XCResponseNameDefinition } from "../types/response";
+import { XCQueryKey, XCQueryOption, XCRecording, XCRecordingKey, XCResponse, XCResponseKey } from "../types";
+
+/**
+ * Represents additional options for general convert function.
+ */
+export interface AdditionalConvertOption {
+  /**
+   * Whether to skip the query string sanitization.
+   */
+  skipSanitizeQuery?: boolean;
+  /**
+ * Don't throw an error if no query is provided.
+ */
+  skipEmptyQueryCheck?: boolean;
+}
 
 /**
  * Constructs a query URL by appending the provided query string to the base URL and optionally including additional query options.
  *
  * @param {string} baseUrl - The base URL to which the query string will be appended.
- * @param {XCQueryOption} [options] - Optional additional query options.
+ * @param {XCQueryOption} [options] - The XCQueryOption object to convert.
+ * @param {AdditionalConvertOption} [additionalOptions] - Additional convert options.
  * @return {URL | string} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
   options: XCQueryOption,
+  additionalOptions?: AdditionalConvertOption,
 ): URL | string {
   let url: URL | string;
 
@@ -22,57 +37,77 @@ export function constructQueryUrl(
     url = baseUrl;
   }
 
-  let parms = new URLSearchParams();
-
   // Append options to search parameters
-  const optionParms = convertXCQueryOptionToSearchParams(options);
-  for (let [key, val] of optionParms.entries()) {
-    parms.append(key, `"${val}"`);
-  }
+  const parms = convertXCQueryOptionToURLSearchParams(options, additionalOptions);
+  const parmsString = parms.toString();
 
   // Set URL object's search parameters
   if (typeof url === "object" && url instanceof URL) {
-    url.search = parms.toString();
+    url.search = parmsString;
   } else {
     // Create a string URL with the search parameters
-    const queryString = parms.toString();
-    url += (url.includes("?") ? "&" : "?") + queryString;
+    url += (url.includes("?") ? "&" : "?") + parmsString;
   }
 
   return url;
 }
 
 /**
+ * Remove whitespace from query, and remove special characters (e.g., quotes)
+ *
+ * @param {string} query - The query string to sanitize
+ * @return {string} The sanitized query string, or string `""` if query is empty after processing
+ */
+export function sanitizeQuery(query: string): string {
+  // Remove whitespace from query, and remove special characters (e.g., quotes)
+  const pattern = new RegExp(/[`'"]/, "g");
+  const result = query.trim().replace(pattern, "");
+  return result;
+}
+
+/**
  * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
  *
  * @param {XCQueryOption} options - The XCQueryOption object to convert.
+ * @param {AdditionalConvertOption} [additionalOptions] - Additional convert options.
  * @return {URLSearchParams} The URLSearchParams object representing the XCQueryOption object.
  */
-export function convertXCQueryOptionToSearchParams(
+export function convertXCQueryOptionToURLSearchParams(
   options: XCQueryOption,
+  additionalOptions?: AdditionalConvertOption,
 ): URLSearchParams {
   const params = new URLSearchParams();
 
-  if (!options) {
-    return params;
-  }
+  // Sanitize the query string
+  if (!additionalOptions?.skipSanitizeQuery) options.query = sanitizeQuery(options.query);
 
-  // Append query to search parameters
-  const processedQuery = options.query.trim();
-  if (processedQuery) {
-    params.append(XCQueryNameDefinition.query, processedQuery);
-  } else {
-    params.append(XCQueryNameDefinition.query, `""`); // As an empty query is not allowed
-  }
-
-  // Append page to search parameters
-  if (options.page) {
-    params.append(XCQueryNameDefinition.page, String(options.page));
+  // Check if query is empty (As the API doesn't accept empty query by default)
+  if (!additionalOptions?.skipEmptyQueryCheck && !options.query) {
+    throw new Error(
+      "The API doesn't allow empty query without other parameters. " +
+      "Please ensure that the 'query' parameter in 'options' is not empty, " +
+      "or set 'muteEmptyQueryError' in `additionalOptions` to `true` to mute this error.",
+    );
   }
 
   // Append rest of options to search parameters
   Object.entries(options).forEach(([key, value]) => {
-    params.append(key, String(value ?? ""));
+    let newValue = value;
+
+    // Additional processing for specific keys
+    switch (key) {
+      case XCQueryKey.query:
+      case XCQueryKey.page:
+        // Do nothing (no need to surround the value in double quotes)
+        break;
+
+      default:
+        // Surround the value in double quotes
+        newValue = `"${value}"`;
+        break;
+    }
+
+    params.append(key, String(newValue));
   });
 
   return params;
@@ -86,63 +121,63 @@ export function convertXCQueryOptionToSearchParams(
  */
 export function convertJsonToXCResponse(json: any): XCResponse {
   return {
-    numRecordings: Number(json[XCResponseNameDefinition.numRecordings]),
-    numSpecies: Number(json[XCResponseNameDefinition.numSpecies]),
-    page: Number(json[XCResponseNameDefinition.page]),
-    numPages: Number(json[XCResponseNameDefinition.numPages]),
+    numRecordings: Number(json[XCResponseKey.numRecordings]),
+    numSpecies: Number(json[XCResponseKey.numSpecies]),
+    page: Number(json[XCResponseKey.page]),
+    numPages: Number(json[XCResponseKey.numPages]),
     recordings:
-      json[XCResponseNameDefinition.recordings]?.map((recording: any): XCRecording => {
+      json[XCResponseKey.recordings]?.map((recording: any): XCRecording => {
         return {
-          id: recording[XCRecordingNameDefinition.id],
-          gen: recording[XCRecordingNameDefinition.gen],
-          sp: recording[XCRecordingNameDefinition.sp],
-          ssp: recording[XCRecordingNameDefinition.ssp],
-          group: recording[XCRecordingNameDefinition.group],
-          en: recording[XCRecordingNameDefinition.en],
-          rec: recording[XCRecordingNameDefinition.rec],
-          cnt: recording[XCRecordingNameDefinition.cnt],
-          loc: recording[XCRecordingNameDefinition.loc],
-          lat: recording[XCRecordingNameDefinition.lat],
-          lng: recording[XCRecordingNameDefinition.lng],
-          alt: recording[XCRecordingNameDefinition.alt],
-          type: recording[XCRecordingNameDefinition.type],
-          sex: recording[XCRecordingNameDefinition.sex],
-          stage: recording[XCRecordingNameDefinition.stage],
-          method: recording[XCRecordingNameDefinition.method],
-          url: recording[XCRecordingNameDefinition.url],
-          file: recording[XCRecordingNameDefinition.file],
-          fileName: recording[XCRecordingNameDefinition.fileName],
+          id: recording[XCRecordingKey.id],
+          gen: recording[XCRecordingKey.gen],
+          sp: recording[XCRecordingKey.sp],
+          ssp: recording[XCRecordingKey.ssp],
+          group: recording[XCRecordingKey.group],
+          en: recording[XCRecordingKey.en],
+          rec: recording[XCRecordingKey.rec],
+          cnt: recording[XCRecordingKey.cnt],
+          loc: recording[XCRecordingKey.loc],
+          lat: recording[XCRecordingKey.lat],
+          lng: recording[XCRecordingKey.lng],
+          alt: recording[XCRecordingKey.alt],
+          type: recording[XCRecordingKey.type],
+          sex: recording[XCRecordingKey.sex],
+          stage: recording[XCRecordingKey.stage],
+          method: recording[XCRecordingKey.method],
+          url: recording[XCRecordingKey.url],
+          file: recording[XCRecordingKey.file],
+          fileName: recording[XCRecordingKey.fileName],
           sono: {
-            small: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.small],
-            med: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.med],
-            large: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.large],
-            full: recording[XCRecordingNameDefinition.sono][XCRecordingNameDefinition.full],
+            small: recording[XCRecordingKey.sono][XCRecordingKey.small],
+            med: recording[XCRecordingKey.sono][XCRecordingKey.med],
+            large: recording[XCRecordingKey.sono][XCRecordingKey.large],
+            full: recording[XCRecordingKey.sono][XCRecordingKey.full],
           },
           osci: {
-            small: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.small],
-            med: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.med],
-            large: recording[XCRecordingNameDefinition.osci][XCRecordingNameDefinition.large],
+            small: recording[XCRecordingKey.osci][XCRecordingKey.small],
+            med: recording[XCRecordingKey.osci][XCRecordingKey.med],
+            large: recording[XCRecordingKey.osci][XCRecordingKey.large],
           },
-          lic: recording[XCRecordingNameDefinition.lic],
-          q: recording[XCRecordingNameDefinition.q],
-          length: recording[XCRecordingNameDefinition.length],
-          time: recording[XCRecordingNameDefinition.time],
-          date: recording[XCRecordingNameDefinition.date],
-          uploaded: recording[XCRecordingNameDefinition.uploaded],
-          also: recording[XCRecordingNameDefinition.also],
-          rmk: recording[XCRecordingNameDefinition.rmk],
-          birdSeen: recording[XCRecordingNameDefinition.birdSeen],
-          animalSeen: recording[XCRecordingNameDefinition.animalSeen],
-          playbackUsed: recording[XCRecordingNameDefinition.playbackUsed],
-          temp: recording[XCRecordingNameDefinition.temp],
-          regnr: recording[XCRecordingNameDefinition.regnr],
-          auto: recording[XCRecordingNameDefinition.auto],
-          dvc: recording[XCRecordingNameDefinition.dvc],
-          mic: recording[XCRecordingNameDefinition.mic],
-          smp: Number(recording[XCRecordingNameDefinition.smp]),
+          lic: recording[XCRecordingKey.lic],
+          q: recording[XCRecordingKey.q],
+          length: recording[XCRecordingKey.length],
+          time: recording[XCRecordingKey.time],
+          date: recording[XCRecordingKey.date],
+          uploaded: recording[XCRecordingKey.uploaded],
+          also: recording[XCRecordingKey.also],
+          rmk: recording[XCRecordingKey.rmk],
+          birdSeen: recording[XCRecordingKey.birdSeen],
+          animalSeen: recording[XCRecordingKey.animalSeen],
+          playbackUsed: recording[XCRecordingKey.playbackUsed],
+          temp: recording[XCRecordingKey.temp],
+          regnr: recording[XCRecordingKey.regnr],
+          auto: recording[XCRecordingKey.auto],
+          dvc: recording[XCRecordingKey.dvc],
+          mic: recording[XCRecordingKey.mic],
+          smp: Number(recording[XCRecordingKey.smp]),
         };
       }) || [],
-    error: json[XCResponseNameDefinition.error],
-    message: json[XCResponseNameDefinition.message],
+    error: json[XCResponseKey.error],
+    message: json[XCResponseKey.message],
   };
 }

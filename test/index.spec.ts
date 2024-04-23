@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AdditionalWrapperOption, XCQueryOption, constructQueryUrl, convertJsonToXCResponse, search } from "../src";
+import { AdditionalSearchOption, XCQueryOption, constructQueryUrl, convertJsonToXCResponse, search } from "../src";
 
 describe("Search function", () => {
   beforeEach(async () => {
@@ -75,7 +75,7 @@ describe("Search function", () => {
       expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
     });
 
-    test("Empty query should throw an error", async () => {
+    test("Empty query should throw an error internally", async () => {
       await expect(search({ query: "" })).rejects.toThrowError();
       await expect(search({ query: " " })).rejects.toThrowError();
       await expect(search({ query: "    " })).rejects.toThrowError();
@@ -104,23 +104,6 @@ describe("Search function", () => {
       const options: XCQueryOption = {
         query: "Sparrow",
         "non-existent-tag": "no",
-      };
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Empty query with options", async () => {
-      const options: XCQueryOption = {
-        query: "",
-        cnt: "Brazil",
-        q: "A",
       };
       const result = await search(options);
 
@@ -201,7 +184,7 @@ describe("Search function", () => {
       }
     });
 
-    test("Query with non-existent page should throw an error", async () => {
+    test("Query with non-existent page should throw an error from API", async () => {
       const options: XCQueryOption = {
         query: "Sparrow",
         grp: "birds",
@@ -217,6 +200,7 @@ describe("Search function", () => {
         expect(result.xcResponse).toBeDefined();
         expect(result.xcResponse.error).toBeDefined();
         expect(result.xcResponse.message).toBeDefined();
+        console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
       }).rejects.toThrowError();
     });
   });
@@ -228,7 +212,7 @@ describe("Search function", () => {
         grp: "birds",
         cnt: "Brazil",
       };
-      const additionalOptions: AdditionalWrapperOption = {
+      const additionalOptions: AdditionalSearchOption = {
         baseUrl:
           "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b", // Fake data
       };
@@ -280,5 +264,35 @@ describe("Search function", () => {
       console.log(`Requested URL: ${url}`);
       expect(url).toBeTypeOf("string");
     });
+
+    test("Query with quotes, but explicitly skip sanitization, which should throw an error from API", async () => {
+      const options: XCQueryOption = {
+        query: '"Sparrow"'
+      }
+
+      await expect(async () => {
+        const result = await search(options, { skipSanitizeQuery: true });
+        console.log(`Requested URL: ${result.url}`);
+        expect(result).toBeDefined();
+        expect(result.rawResponse).toBeDefined();
+        expect(result.xcResponse).toBeDefined();
+        expect(result.xcResponse.error).toBeDefined();
+        expect(result.xcResponse.message).toBeDefined();
+        console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
+      }).rejects.toThrowError();
+    });
+  });
+
+  test("Empty query, but explicitly skip empty query check, which should throw an error from API", async () => {
+    await expect(async () => {
+      const result = await search({ query: "" }, { skipEmptyQueryCheck: true });
+      console.log(`Requested URL: ${result.url}`);
+      expect(result).toBeDefined();
+      expect(result.rawResponse).toBeDefined();
+      expect(result.xcResponse).toBeDefined();
+      expect(result.xcResponse.error).toBeDefined();
+      expect(result.xcResponse.message).toBeDefined();
+      console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
+    }).rejects.toThrowError();
   });
 });
