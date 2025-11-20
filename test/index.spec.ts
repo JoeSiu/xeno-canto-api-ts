@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AdditionalSearchOption, XCQueryOption, constructQueryUrl, convertJsonToXCResponse, search } from "../src";
+import { XCQueryOption, constructQueryUrl, search, BASE_URL } from "../src";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const apiKey = process.env.XC_API_KEY || "demo"; // Default to "demo" if not provided
 
 describe("Search function", () => {
   beforeEach(async () => {
@@ -7,292 +12,121 @@ describe("Search function", () => {
     return await new Promise((resolve) => setTimeout(resolve, 1000));
   });
 
-  test("Should have response status 200", async () => {
-    const options: XCQueryOption = {
-      query: "Sparrow"
-    }
-    const result = await search(options);
-
-    expect(result.rawResponse.status).toBe(200);
-  });
-
-  describe("Simple search", () => {
-    test("Normal query", async () => {
+  describe("URL Construction", () => {
+    test("Structured query tags", () => {
       const options: XCQueryOption = {
-        query: "Sparrow"
-      }
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
+        cnt: "Brazil",
+        grp: "birds",
+        key: apiKey
+      };
+      const url = constructQueryUrl(BASE_URL, options);
+      const urlObj = new URL(url.toString());
+      const queryParam = urlObj.searchParams.get("query");
+      expect(queryParam).toContain('cnt:"Brazil"');
+      expect(queryParam).toContain('grp:"birds"');
+      expect(urlObj.searchParams.get("key")).toBe(apiKey);
     });
 
-    test("Wrong query", async () => {
+    test("Pagination params", () => {
       const options: XCQueryOption = {
-        query: "qwertyuiopasdfghjklzxcvbnm"
-      }
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.recordings.length).toBe(0);
+        cnt: "Brazil",
+        page: 2,
+        per_page: 50,
+        key: apiKey
+      };
+      const urlObj = new URL(constructQueryUrl(BASE_URL, options).toString());
+      expect(urlObj.searchParams.get("page")).toBe("2");
+      expect(urlObj.searchParams.get("per_page")).toBe("50");
+      expect(urlObj.searchParams.get("key")).toBe(apiKey);
     });
 
-    test("Query with whitespaces", async () => {
+    test("Any extra search options", () => {
       const options: XCQueryOption = {
-        query: "   Sparrow   "
-      }
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query with quotes", async () => {
-      const options: XCQueryOption = {
-        query: '"Sparrow"'
-      }
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Empty query should throw an error internally", async () => {
-      await expect(search({ query: "" })).rejects.toThrowError();
-      await expect(search({ query: " " })).rejects.toThrowError();
-      await expect(search({ query: "    " })).rejects.toThrowError();
+        en: "white",
+        custom_tag: "custom_value",
+        key: apiKey
+      };
+      const urlObj = new URL(constructQueryUrl(BASE_URL, options).toString());
+      const queryParam = urlObj.searchParams.get("query");
+      expect(queryParam).toContain('en:"white"');
+      expect(queryParam).toContain('custom_tag:"custom_value"');
+      expect(urlObj.searchParams.get("key")).toBe(apiKey);
     });
   });
 
-  describe("Advanced search", () => {
-    test("Normal query", async () => {
+  // Integration tests
+  describe("Integration Tests", () => {
+    test("Should have response status 200", async () => {
       const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-        cnt: "Brazil",
-      };
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query with non-existent tag", async () => {
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        "non-existent-tag": "no",
-      };
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query with spaced tag", async () => {
-      const options: XCQueryOption = {
-        query: "Larus brachyrhynchus",
-        cnt: "United States",
-        method: "field recording",
-      };
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query with non-bird group", async () => {
-      const options: XCQueryOption = {
-        query: "Wood Cricket",
-        grp: "grasshoppers",
-      };
-      const result = await search(options);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Query multiple pages", async () => {
-      let currentPage = 1;
-      const maxPages = 3;
-
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-      };
-
-      console.log(`Requesting first page: ${currentPage}/${maxPages}`);
-      const result = await search({ ...options, page: currentPage });
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      console.log(`numPages: ${result.xcResponse.numPages}`);
-
-      while (currentPage < maxPages) {
-        currentPage++;
-        console.log(`Requesting next page: ${currentPage}/${maxPages}`);
-        const nextResult = await search({ ...options, page: currentPage });
-        console.log(`Requested URL: ${nextResult.url}`);
-        console.log(
-          `recordings.length: ${nextResult.xcResponse.recordings.length}`,
-        );
-        expect(nextResult).toBeDefined();
-        expect(nextResult.rawResponse).toBeDefined();
-        expect(nextResult.xcResponse).toBeDefined();
-        expect(nextResult.xcResponse.page).toBe(currentPage);
-        expect(nextResult.xcResponse.numRecordings).toBeGreaterThan(0);
-        expect(nextResult.xcResponse.recordings.length).toBeGreaterThan(0);
-
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        en: "Sparrow",
+        key: apiKey
       }
+      const result = await search(options);
+
+      expect(result.rawResponse.status).toBe(200);
     });
 
-    test("Query with non-existent page should throw an error from API", async () => {
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-        cnt: "Brazil",
-        q: "A",
-      };
+    describe("Simple search", () => {
+      test("Normal query using tags", async () => {
+        const options: XCQueryOption = {
+          en: "Sparrow",
+          key: apiKey
+        }
+        const result = await search(options);
 
-      await expect(async () => {
+        console.log(`Requested URL: ${result.url}`);
+        console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
+        expect(result).toBeDefined();
+        expect(result.rawResponse).toBeDefined();
+        expect(result.xcResponse).toBeDefined();
+        expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
+      });
+
+      test("Query with structured tags (cnt: Brazil)", async () => {
+        const options: XCQueryOption = {
+          en: "Sparrow",
+          cnt: "Brazil",
+          key: apiKey
+        };
         const result = await search(options);
         console.log(`Requested URL: ${result.url}`);
-        expect(result).toBeDefined();
-        expect(result.rawResponse).toBeDefined();
-        expect(result.xcResponse).toBeDefined();
-        expect(result.xcResponse.error).toBeDefined();
-        expect(result.xcResponse.message).toBeDefined();
-        console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
-      }).rejects.toThrowError();
-    });
-  });
+        expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
+        if (result.xcResponse.recordings.length > 0) {
+          expect(result.xcResponse.recordings[0].cnt).toBeDefined();
+        }
+      });
 
-  describe("Additional options", () => {
-    test("Override the default BASE_URL", async () => {
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-        cnt: "Brazil",
-      };
-      const additionalOptions: AdditionalSearchOption = {
-        baseUrl:
-          "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b", // Fake data
-      };
+      test("Wrong query", async () => {
+        const options: XCQueryOption = {
+          en: "qwertyuiopasdfghjklzxcvbnm",
+          key: apiKey
+        }
+        const result = await search(options);
 
-      const result = await search(options, additionalOptions);
-
-      console.log(`Requested URL: ${result.url}`);
-      console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
-      console.log(`numPages: ${result.xcResponse.numPages}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.numRecordings).toBeGreaterThan(0);
-      expect(result.xcResponse.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Custom fetch (URL object)", async () => {
-      const baseUrl = "https://run.mocky.io/v3/9f08db9a-cfba-4b1d-8c4a-765932f6cf3b"
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-        cnt: "Brazil",
-      };
-
-      const url = constructQueryUrl(baseUrl, options);
-
-      const response = await fetch(url);
-      const json = await response.json();
-      const result = convertJsonToXCResponse(json);
-
-      console.log(`Requested URL: ${url}`);
-      console.log(`numRecordings: ${result.numRecordings}`);
-      console.log(`numPages: ${result.numPages}`);
-      expect(result).toBeDefined();
-      expect(result.numRecordings).toBeGreaterThan(0);
-      expect(result.recordings.length).toBeGreaterThan(0);
-    });
-
-    test("Custom fetch (non-valid URL object input)", async () => {
-      const baseUrl = "/api/xeno-canto"
-      const options: XCQueryOption = {
-        query: "Sparrow",
-        grp: "birds",
-        cnt: "Brazil",
-      };
-
-      const url = constructQueryUrl(baseUrl, options);
-
-      console.log(`Requested URL: ${url}`);
-      expect(url).toBeTypeOf("string");
-    });
-
-    test("Query with quotes, but explicitly skip sanitization, which should throw an error from API", async () => {
-      const options: XCQueryOption = {
-        query: '"Sparrow"'
-      }
-
-      await expect(async () => {
-        const result = await search(options, { skipSanitizeQuery: true });
         console.log(`Requested URL: ${result.url}`);
-        expect(result).toBeDefined();
-        expect(result.rawResponse).toBeDefined();
-        expect(result.xcResponse).toBeDefined();
-        expect(result.xcResponse.error).toBeDefined();
-        expect(result.xcResponse.message).toBeDefined();
-        console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
-      }).rejects.toThrowError();
+        console.log(`numRecordings: ${result.xcResponse.numRecordings}`);
+        expect(result.xcResponse.recordings.length).toBe(0);
+      });
     });
-  });
 
-  test("Empty query, but explicitly skip empty query check, which should throw an error from API", async () => {
-    await expect(async () => {
-      const result = await search({ query: "" }, { skipEmptyQueryCheck: true });
-      console.log(`Requested URL: ${result.url}`);
-      expect(result).toBeDefined();
-      expect(result.rawResponse).toBeDefined();
-      expect(result.xcResponse).toBeDefined();
-      expect(result.xcResponse.error).toBeDefined();
-      expect(result.xcResponse.message).toBeDefined();
-      console.log(`Error: [${result.xcResponse.error}] - ${result.xcResponse.message}`);
-    }).rejects.toThrowError();
+    describe("Advanced search features", () => {
+      test("Per page option (50)", async () => {
+        const options: XCQueryOption = {
+          en: "Sparrow",
+          per_page: 50,
+          key: apiKey
+        };
+        const result = await search(options);
+        console.log(`Requested URL: ${result.url}`);
+        console.log(`Recordings returned: ${result.xcResponse.recordings.length}`);
+        expect(result.xcResponse.recordings.length).toBe(50);
+      });
+    });
+
+    describe("Error Handling", () => {
+      test("Empty query should throw an error internally", async () => {
+        await expect(search({ key: apiKey })).rejects.toThrowError();
+      });
+    });
   });
 });

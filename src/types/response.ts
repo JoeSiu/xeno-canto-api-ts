@@ -19,13 +19,13 @@ export enum XCRecordingKey {
   gen = "gen",
   sp = "sp",
   ssp = "ssp",
-  group = "group",
+  group = "grp",
   en = "en",
   rec = "rec",
   cnt = "cnt",
   loc = "loc",
   lat = "lat",
-  lng = "lng",
+  lon = "lon",
   alt = "alt",
   type = "type",
   sex = "sex",
@@ -67,31 +67,31 @@ export interface XCResponse {
   /**
    * The total number of recordings found for this query.
    */
-  [XCResponseKey.numRecordings]: number;
+  numRecordings: number;
   /**
    * The total number of species found for this query.
    */
-  [XCResponseKey.numSpecies]: number;
+  numSpecies: number;
   /**
    * The page number of the results page that is being displayed.
    */
-  [XCResponseKey.page]: number;
+  page: number;
   /**
    * The total number of pages available for this query.
    */
-  [XCResponseKey.numPages]: number;
+  numPages: number;
   /**
    * An array of recording objects.
    */
-  [XCResponseKey.recordings]: XCRecording[];
+  recordings: XCRecording[];
   /**
    * Error type, if any.
    */
-  [XCResponseKey.error]?: string;
+  error?: string;
   /**
    * Error message, if any.
    */
-  [XCResponseKey.message]?: string;
+  message?: string;
 }
 
 /**
@@ -101,162 +101,162 @@ export interface XCRecording {
   /**
    * The catalogue number of the recording on xeno-canto.
    */
-  [XCRecordingKey.id]: string;
+  id: string;
   /**
    * The generic name of the species.
    */
-  [XCRecordingKey.gen]: string;
+  gen: string;
   /**
    * The specific name (epithet) of the species.
    */
-  [XCRecordingKey.sp]: string;
+  sp: string;
   /**
    * The subspecies name (subspecific epithet).
    */
-  [XCRecordingKey.ssp]: string;
+  ssp: string;
   /**
    * The group to which the species belongs (birds, grasshoppers, bats).
    */
-  [XCRecordingKey.group]: string;
+  grp: string;
   /**
    * The English name of the species.
    */
-  [XCRecordingKey.en]: string;
+  en: string;
   /**
    * The name of the recordist.
    */
-  [XCRecordingKey.rec]: string;
+  rec: string;
   /**
    * The country where the recording was made.
    */
-  [XCRecordingKey.cnt]: string;
+  cnt: string;
   /**
    * The name of the locality.
    */
-  [XCRecordingKey.loc]: string;
+  loc: string;
   /**
    * The latitude of the recording in decimal coordinates.
    */
-  [XCRecordingKey.lat]: string;
+  lat: string;
   /**
    * The longitude of the recording in decimal coordinates.
    */
-  [XCRecordingKey.lng]: string;
+  lon: string;
   /**
    * Elevation (in meter).
    */
-  [XCRecordingKey.alt]: string;
+  alt: string;
   /**
    * The sound type of the recording (combining both predefined terms such as 'call' or 'song' and additional free text options).
    */
-  [XCRecordingKey.type]: string;
+  type: string;
   /**
    * The sex of the animal.
    */
-  [XCRecordingKey.sex]: string;
+  sex: string;
   /**
    * The life stage of the animal (adult, juvenile, etc.).
    */
-  [XCRecordingKey.stage]: string;
+  stage: string;
   /**
    * The recording method (field recording, in the hand, etc.).
    */
-  [XCRecordingKey.method]: string;
+  method: string;
   /**
    * The URL specifying the details of this recording.
    */
-  [XCRecordingKey.url]: string;
+  url: string;
   /**
    * The URL to the audio file.
    */
-  [XCRecordingKey.file]: string;
+  file: string;
   /**
    * The original file name of the audio file.
    */
-  [XCRecordingKey.fileName]: string;
+  fileName: string;
   /**
    * An object with the URLs to the four versions of sonograms.
    */
-  [XCRecordingKey.sono]: {
-    [XCRecordingKey.small]: string;
-    [XCRecordingKey.med]: string;
-    [XCRecordingKey.large]: string;
-    [XCRecordingKey.full]: string;
+  sono: {
+    small: string;
+    med: string;
+    large: string;
+    full: string;
   };
   /**
    * An object with the URLs to the three versions of oscillograms.
    */
-  [XCRecordingKey.osci]: {
-    [XCRecordingKey.small]: string;
-    [XCRecordingKey.med]: string;
-    [XCRecordingKey.large]: string;
+  osci: {
+    small: string;
+    med: string;
+    large: string;
   };
   /**
    * The URL describing the license of this recording.
    */
-  [XCRecordingKey.lic]: string;
+  lic: string;
   /**
    * The current quality rating for the recording.
    */
-  [XCRecordingKey.q]: string;
+  q: string;
   /**
    * The length of the recording in minutes.
    */
-  [XCRecordingKey.length]: string;
+  length: string;
   /**
    * The time of day that the recording was made.
    */
-  [XCRecordingKey.time]: string;
+  time: string;
   /**
    * The date that the recording was made.
    */
-  [XCRecordingKey.date]: string;
+  date: string;
   /**
    * The date that the recording was uploaded to xeno-canto.
    */
-  [XCRecordingKey.uploaded]: string;
+  uploaded: string;
   /**
    * An array with the identified background species in the recording.
    */
-  [XCRecordingKey.also]: string[];
+  also: string[];
   /**
    * Additional remarks by the recordist.
    */
-  [XCRecordingKey.rmk]: string;
+  rmk: string;
   /**
    * Indicates whether the recorded animal was seen.
    */
-  [XCRecordingKey.birdSeen]: string;
+  birdSeen: string;
   /**
    * Was the recorded animal seen.
    */
-  [XCRecordingKey.animalSeen]: string;
+  animalSeen: string;
   /**
    * Was playback used to lure the animal.
    */
-  [XCRecordingKey.playbackUsed]: string;
+  playbackUsed: string;
   /**
    * Temperature during recording (applicable to specific groups only).
    */
-  [XCRecordingKey.temp]: string;
+  temp: string;
   /**
    * Registration number of specimen (when collected).
    */
-  [XCRecordingKey.regnr]: string;
+  regnr: string;
   /**
    * Automatic (non-supervised) recording.
    */
-  [XCRecordingKey.auto]: string;
+  auto: string;
   /**
    * Recording device used.
    */
-  [XCRecordingKey.dvc]: string;
+  dvc: string;
   /**
    * Microphone used.
    */
-  [XCRecordingKey.mic]: string;
+  mic: string;
   /**
    * Sample rate.
    */
-  [XCRecordingKey.smp]: number;
+  smp: number;
 }

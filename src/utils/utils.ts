@@ -1,31 +1,15 @@
 import { XCQueryKey, XCQueryOption, XCRecording, XCRecordingKey, XCResponse, XCResponseKey } from "../types";
 
 /**
- * Represents additional options for general convert function.
- */
-export interface AdditionalConvertOption {
-  /**
-   * Whether to skip the query string sanitization.
-   */
-  skipSanitizeQuery?: boolean;
-  /**
- * Don't throw an error if no query is provided.
- */
-  skipEmptyQueryCheck?: boolean;
-}
-
-/**
  * Constructs a query URL by appending the provided query string to the base URL and optionally including additional query options.
  *
  * @param {string} baseUrl - The base URL to which the query string will be appended.
  * @param {XCQueryOption} [options] - The XCQueryOption object to convert.
- * @param {AdditionalConvertOption} [additionalOptions] - Additional convert options.
  * @return {URL | string} The constructed query URL.
  */
 export function constructQueryUrl(
   baseUrl: string,
-  options: XCQueryOption,
-  additionalOptions?: AdditionalConvertOption,
+  options: XCQueryOption
 ): URL | string {
   let url: URL | string;
 
@@ -38,7 +22,7 @@ export function constructQueryUrl(
   }
 
   // Append options to search parameters
-  const parms = convertXCQueryOptionToURLSearchParams(options, additionalOptions);
+  const parms = convertXCQueryOptionToURLSearchParams(options);
   const parmsString = parms.toString();
 
   // Set URL object's search parameters
@@ -66,49 +50,39 @@ export function sanitizeQuery(query: string): string {
 }
 
 /**
- * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
+ * Converts an XCQueryOption object to a required URL string parameter format. 
+ * For example: query="grp:"birds" cnt:"United States""&key=...
  *
  * @param {XCQueryOption} options - The XCQueryOption object to convert.
  * @param {AdditionalConvertOption} [additionalOptions] - Additional convert options.
  * @return {URLSearchParams} The URLSearchParams object representing the XCQueryOption object.
  */
 export function convertXCQueryOptionToURLSearchParams(
-  options: XCQueryOption,
-  additionalOptions?: AdditionalConvertOption,
+  options: XCQueryOption
 ): URLSearchParams {
   const params = new URLSearchParams();
+  const queryParts: string[] = [];
 
-  // Sanitize the query string
-  if (!additionalOptions?.skipSanitizeQuery) options.query = sanitizeQuery(options.query);
-
-  // Check if query is empty (As the API doesn't accept empty query by default)
-  if (!additionalOptions?.skipEmptyQueryCheck && !options.query) {
-    throw new Error(
-      "The API doesn't allow empty query without other parameters. " +
-      "Please ensure that the 'query' parameter in 'options' is not empty, " +
-      "or set 'muteEmptyQueryError' in `additionalOptions` to `true` to mute this error.",
-    );
-  }
-
-  // Append rest of options to search parameters
   Object.entries(options).forEach(([key, value]) => {
-    let newValue = value;
-
-    // Additional processing for specific keys
-    switch (key) {
-      case XCQueryKey.query:
-      case XCQueryKey.page:
-        // Do nothing (no need to surround the value in double quotes)
-        break;
-
-      default:
-        // Surround the value in double quotes
-        newValue = `"${value}"`;
-        break;
+    if (value === undefined || value === null) {
+      return;
     }
 
-    params.append(key, String(newValue));
+    // Handle special parameters
+    if (key === XCQueryKey.key || key === XCQueryKey.page || key === XCQueryKey.per_page) {
+      params.append(key, String(value));
+      return;
+    }
+
+    // Handle all other parameters
+    // Surround the value in double quotes
+    queryParts.push(`${key}:"${value}"`);
   });
+
+  // If there are any query parts, join them with spaces and append as 'query' parameter
+  if (queryParts.length > 0) {
+    params.append('query', queryParts.join(' '));
+  }
 
   return params;
 }
@@ -132,13 +106,13 @@ export function convertJsonToXCResponse(json: any): XCResponse {
           gen: recording[XCRecordingKey.gen],
           sp: recording[XCRecordingKey.sp],
           ssp: recording[XCRecordingKey.ssp],
-          group: recording[XCRecordingKey.group],
+          grp: recording[XCRecordingKey.group],
           en: recording[XCRecordingKey.en],
           rec: recording[XCRecordingKey.rec],
           cnt: recording[XCRecordingKey.cnt],
           loc: recording[XCRecordingKey.loc],
           lat: recording[XCRecordingKey.lat],
-          lng: recording[XCRecordingKey.lng],
+          lon: recording[XCRecordingKey.lon],
           alt: recording[XCRecordingKey.alt],
           type: recording[XCRecordingKey.type],
           sex: recording[XCRecordingKey.sex],

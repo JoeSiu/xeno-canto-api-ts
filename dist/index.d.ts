@@ -1,7 +1,70 @@
 /**
+ * Represents the keys for the query options.
+ */
+declare enum XCQueryKey {
+    key = "key",
+    per_page = "per_page",
+    page = "page",
+    grp = "grp",
+    gen = "gen",
+    sp = "sp",
+    ssp = "ssp",
+    fam = "fam",
+    en = "en",
+    rec = "rec",
+    cnt = "cnt",
+    loc = "loc",
+    rmk = "rmk",
+    seen = "seen",
+    playback = "playback",
+    lan = "lan",
+    lon = "lon",
+    box = "box",
+    also = "also",
+    type = "type",
+    othertype = "othertype",
+    sex = "sex",
+    state = "state",
+    method = "method",
+    nr = "nr",
+    lic = "lic",
+    q = "q",
+    len = "len",
+    area = "area",
+    since = "since",
+    year = "year",
+    month = "month",
+    colyear = "colyear",
+    colmonth = "colmonth",
+    temp = "temp",
+    regnr = "regnr",
+    auto = "auto",
+    dvc = "dvc",
+    mic = "mic",
+    smp = "smp"
+}
+/**
  * Represents the search options for querying.
  */
 interface XCQueryOption {
+    /**
+     * API Key
+     *
+     * The API key required for v3 API.
+     */
+    key: string;
+    /**
+     * Per Page
+     *
+     * Number of results per page (50-500). Default: 100.
+     */
+    per_page?: number;
+    /**
+     * Page
+     *
+     * The page parameter is optional and is only needed if the results from a given search don't fit in a single page. If specified, page must be an integer between 1 and XCResponse.numPages.
+     */
+    page?: number;
     /**
      * Group
      *
@@ -9,11 +72,35 @@ interface XCQueryOption {
      */
     grp?: "soundscape" | "birds" | "grasshoppers" | "bats" | 0 | 1 | 2 | 3 | (string & {});
     /**
-     * Genus/Subspecies
+     * Genus
      *
-     * Genus is part of a species' scientific name, so it is searched by default when performing a basic search (as mentioned above). But you can use the gen tag to limit your search query only to the genus field. So gen:zonotrichia will find all recordings of sparrows in the genus Zonotrichia. Similarly, ssp can be used to search for subspecies. These fields use a 'starts with' rather than 'contains' query and accept a 'matches' operator.
+     * Genus is part of a species' scientific name. You can use the gen tag to limit your search query only to the genus field. So gen:zonotrichia will find all recordings of sparrows in the genus Zonotrichia.
      */
     gen?: string;
+    /**
+     * Specific epithet
+     *
+     * The specific name (second part of the scientific name).
+     */
+    sp?: string;
+    /**
+     * Subspecies
+     *
+     * Search for subspecies.
+     */
+    ssp?: string;
+    /**
+     * Family
+     *
+     * Search by family name.
+     */
+    fam?: string;
+    /**
+     * English Name
+     *
+     * Search by English name.
+     */
+    en?: string;
     /**
      * Recordist
      *
@@ -227,16 +314,66 @@ interface XCQueryOption {
      */
     [rest: string]: number | string | undefined;
 }
-/**
- * Represents additional options for the wrapper.
- */
-interface AdditionalWrapperOption {
-    /**
-     * Override the default BASE_URL.
-     */
-    baseUrl?: string;
-}
 
+/**
+ * Represents the keys for the response options.
+ */
+declare enum XCResponseKey {
+    numRecordings = "numRecordings",
+    numSpecies = "numSpecies",
+    page = "page",
+    numPages = "numPages",
+    recordings = "recordings",
+    error = "error",
+    message = "message"
+}
+/**
+ * Represents the keys for the recording options.
+ */
+declare enum XCRecordingKey {
+    id = "id",
+    gen = "gen",
+    sp = "sp",
+    ssp = "ssp",
+    group = "grp",
+    en = "en",
+    rec = "rec",
+    cnt = "cnt",
+    loc = "loc",
+    lat = "lat",
+    lon = "lon",
+    alt = "alt",
+    type = "type",
+    sex = "sex",
+    stage = "stage",
+    method = "method",
+    url = "url",
+    file = "file",
+    fileName = "fileName",
+    sono = "sono",
+    osci = "osci",
+    lic = "lic",
+    q = "q",
+    length = "length",
+    time = "time",
+    date = "date",
+    uploaded = "uploaded",
+    also = "also",
+    rmk = "rmk",
+    birdSeen = "birdSeen",
+    animalSeen = "animalSeen",
+    playbackUsed = "playbackUsed",
+    temp = "temp",
+    regnr = "regnr",
+    auto = "auto",
+    dvc = "dvc",
+    mic = "mic",
+    smp = "smp",
+    small = "small",
+    med = "med",
+    large = "large",
+    full = "full"
+}
 /**
  * Represents the response object returned by the Xeno-Canto API.
  */
@@ -293,7 +430,7 @@ interface XCRecording {
     /**
      * The group to which the species belongs (birds, grasshoppers, bats).
      */
-    group: string;
+    grp: string;
     /**
      * The English name of the species.
      */
@@ -317,7 +454,7 @@ interface XCRecording {
     /**
      * The longitude of the recording in decimal coordinates.
      */
-    lng: string;
+    lon: string;
     /**
      * Elevation (in meter).
      */
@@ -441,19 +578,26 @@ interface XCRecording {
  * Constructs a query URL by appending the provided query string to the base URL and optionally including additional query options.
  *
  * @param {string} baseUrl - The base URL to which the query string will be appended.
- * @param {string} query - The query string to be appended to the base URL.
- * @param {XCQueryOption} [options] - Optional additional query options.
- * @param {number} [page] - Optional page number.
+ * @param {XCQueryOption} [options] - The XCQueryOption object to convert.
  * @return {URL | string} The constructed query URL.
  */
-declare function constructQueryUrl(baseUrl: string, query: string, options?: XCQueryOption, page?: number): URL | string;
+declare function constructQueryUrl(baseUrl: string, options: XCQueryOption): URL | string;
 /**
- * Converts an XCQueryOption object to a required URL string parameter format. For example: "grp:"birds" cnt:"United States" method:"field recording""
+ * Remove whitespace from query, and remove special characters (e.g., quotes)
  *
- * @param {XCQueryOption} option - The XCQueryOption object to convert.
+ * @param {string} query - The query string to sanitize
+ * @return {string} The sanitized query string, or string `""` if query is empty after processing
+ */
+declare function sanitizeQuery(query: string): string;
+/**
+ * Converts an XCQueryOption object to a required URL string parameter format.
+ * For example: query="grp:"birds" cnt:"United States""&key=...
+ *
+ * @param {XCQueryOption} options - The XCQueryOption object to convert.
+ * @param {AdditionalConvertOption} [additionalOptions] - Additional convert options.
  * @return {URLSearchParams} The URLSearchParams object representing the XCQueryOption object.
  */
-declare function convertXCQueryOptionToSearchParams(option: XCQueryOption): URLSearchParams;
+declare function convertXCQueryOptionToURLSearchParams(options: XCQueryOption): URLSearchParams;
 /**
  * Takes a JSON object and converts it into an XCResponse object.
  *
@@ -462,20 +606,31 @@ declare function convertXCQueryOptionToSearchParams(option: XCQueryOption): URLS
  */
 declare function convertJsonToXCResponse(json: any): XCResponse;
 
-declare const BASE_URL = "https://www.xeno-canto.org/api/2/recordings";
+declare const BASE_URL = "https://xeno-canto.org/api/3/recordings";
+/**
+ * Represents additional options for the search function.
+ */
+interface AdditionalSearchOption {
+    /**
+     * Override the default BASE_URL.
+     */
+    baseUrl?: string;
+    /**
+     * Whether to mute the error if the API returns an error.
+     */
+    muteApiError?: boolean;
+}
 /**
  * Searches for a query via Fetch API and returns the response and XC response.
  *
- * @param {string} query - The query to search for.
  * @param {XCQueryOption} [options] - Options for the search query.
- * @param {number} [page] - The page parameter is optional and is only needed if the results from a given search don't fit in a single page. If specified, page must be an integer between 1 and XCResponse.numPages.
- * @param {AdditionalWrapperOption} [additionalOptions] - Additional options for this wrapper.
+ * @param {AdditionalSearchOption} [additionalOptions] - Additional search options.
  * @return {Promise<{ url: URL, response: Response; xcResponse: XCResponse }>} A promise that resolves to an object containing the query URL, the response from fetch and a XCResponse object.
  */
-declare function search(query: string, options?: XCQueryOption, page?: number, additionalOptions?: AdditionalWrapperOption): Promise<{
+declare function search(options: XCQueryOption, additionalOptions?: AdditionalSearchOption): Promise<{
     url: URL;
     rawResponse: Response;
     xcResponse: XCResponse;
 }>;
 
-export { type AdditionalWrapperOption, BASE_URL, type XCQueryOption, type XCRecording, type XCResponse, constructQueryUrl, convertJsonToXCResponse, convertXCQueryOptionToSearchParams, search };
+export { type AdditionalSearchOption, BASE_URL, XCQueryKey, type XCQueryOption, type XCRecording, XCRecordingKey, type XCResponse, XCResponseKey, constructQueryUrl, convertJsonToXCResponse, convertXCQueryOptionToURLSearchParams, sanitizeQuery, search };

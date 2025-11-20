@@ -63,3 +63,4 @@ TEST-results.xml
 *v8.log
 /lib/
 docs/
+.env
