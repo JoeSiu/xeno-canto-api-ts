@@ -24,4 +24,6 @@ jobs:
         run: npm i
 
       - name: Unit Test
+        env:
+          XC_API_KEY: ${{ secrets.XC_API_KEY }}
         run: npm run test
