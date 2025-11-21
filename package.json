@@ -46,7 +46,7 @@
     }
   ],
   "devDependencies": {
-    "@commitlint/cli": "^18.4.4",
+    "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^18.4.4",
     "bumpp": "^9.2.1",
     "dotenv": "^17.2.3",
