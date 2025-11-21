@@ -17,6 +17,8 @@ jobs:
 
       - run: npm i
       - run: npm test
+        env:
+          XC_API_KEY: ${{ secrets.XC_API_KEY }}
 
   publish-npm:
     needs: check
