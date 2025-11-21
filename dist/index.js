@@ -38,8 +38,8 @@ var __async = (__this, __arguments, generator) => {
 };
 
 // src/index.ts
-var src_exports = {};
-__export(src_exports, {
+var index_exports = {};
+__export(index_exports, {
   BASE_URL: () => BASE_URL,
   XCQueryKey: () => XCQueryKey,
   XCRecordingKey: () => XCRecordingKey,
@@ -50,7 +50,7 @@ __export(src_exports, {
   sanitizeQuery: () => sanitizeQuery,
   search: () => search
 });
-module.exports = __toCommonJS(src_exports);
+module.exports = __toCommonJS(index_exports);
 
 // src/types/query.ts
 var XCQueryKey = /* @__PURE__ */ ((XCQueryKey2) => {
